@@ -1,0 +1,147 @@
+# FM Knowledge Assistant
+
+Cited search and question answering over Singapore building and facilities-management codes. The system retrieves clauses, answers only from them, and withholds any answer it cannot check against the text. It also extracts quantitative requirements and routes passages to their topic.
+
+- **Retrieval:** hybrid. BM25 keyword search is combined with dense vectors (bge-small) through reciprocal-rank fusion. The vectors are held in DuckDB with an HNSW index (the `vss` extension).
+- **Grounded answers:** a draft is shown only if all of these hold:
+  - it cites the supplied passages;
+  - every number in it appears in a cited passage;
+  - the question is close enough to the corpus.
+  Otherwise the assistant says the codes do not cover the question.
+- **Document intelligence:**
+  - extracts requirements such as "not less than 850 mm" as (comparator, value, unit, subject);
+  - classifies passages into their code and chapter.
+- **Serving:** a FastAPI service (`/search`, `/ask`, `/extract`) with a Dockerfile. CI runs the tests and the mutation check, and builds the image.
+- **LLM:** any OpenAI-compatible endpoint. The evaluation uses a local 3B model (qwen2.5:3b through Ollama on a 4 GB GPU), so no data leaves the machine and no key is needed. DeepSeek or Azure OpenAI can be used through the same client, but neither was tested here.
+
+## Corpus
+
+Eight official documents, all publicly downloadable:
+
+| id | Document | Agency |
+|---|---|---|
+| firecode2023 | Code of Practice for Fire Precautions in Buildings 2023 (285 pages) | SCDF |
+| accessibility2025 | Code on Accessibility in the Built Environment 2025 v1.1 | BCA |
+| copeh2024 | Code of Practice on Environmental Health (2024) | NEA |
+| lift_obc2024 | Guide on Specifications for Outcome-Based Lift Maintenance Contracts (2024) | BCA |
+| psi_owner2024, psi_engineer2024 | Periodic Structural Inspection of Existing Buildings: owner's guide and engineers' guidelines (2024) | BCA |
+| gm_maintainability_eb | Green Mark 2021 Maintainability (Existing Buildings) Technical Guide v2.1 | BCA |
+| gm_energy | Green Mark 2021 Energy Efficiency Technical Guide R2.1 | BCA |
+
+**Licensing.** SCDF's and BCA's terms of use do not allow the contents to be republished, so this repository contains no document text, chunks or vectors. `sources.json` lists the official URLs and the SHA-256 of the tested editions, and `python -m fmka.cli fetch` downloads them for local use. PUB's codes were left out because PUB's terms forbid storing its material in an information retrieval system. The evaluation questions are written in my own words and point to clause numbers rather than quoting the text.
+
+Parsing cuts numbered documents at clause numbers (for example "2.3.9", "CLAUSE 1.1", "4.2.1.2"), giving 2,180 chunks. Three safeguards keep the numbering clean:
+
+- Contents pages are skipped.
+- A new chapter must start at N.1, so a table value such as "12.5" inside chapter 3 is not read as a clause.
+- Running headers and footers are removed.
+
+## Results
+
+All numbers are produced by `eval/run_eval.py`, `eval/eval_extraction.py` and `fmka.classify`, with outputs in `eval/results/`.
+
+### Retrieval (40 answerable questions)
+
+A hit means a chunk with the gold clause or page is ranked within the top k.
+
+| Mode | Hit@1 | Hit@5 | MRR@20 |
+|---|---|---|---|
+| BM25 | 0.875 | 1.000 | 0.933 |
+| Dense (bge-small, HNSW) | 0.825 | 1.000 | 0.894 |
+| **Hybrid (RRF)** | **0.900** | **1.000** | **0.946** |
+
+### Grounded answering (48 questions)
+
+The set has 40 answerable questions and 8 that the corpus does not cover. Each unanswerable question was checked by keyword search to have no answer in the corpus, and several are deliberate near misses: the codes have cooling-tower siting rules but no cleaning interval, and toilet illuminance but not office illuminance.
+
+The questions are split into a development set (q01–q20, u01–u04) and a test set (q21–q40, u05–u08). The abstention threshold (0.725 cosine) and every fix below were chosen from development errors.
+
+An answer counts as correct only if it states the expected values **and** cites a gold clause.
+
+| Run | Change | Test: correct / 20 | Test: shown but wrong | Unanswerable abstained / 8 |
+|---|---|---|---|---|
+| v1 | first run | 14 | 3 | 8 |
+| v2 | numbers in the passage header count as sourced; retry once when the model forgets to cite | 16 | 1 | 8 |
+| v3 | the retry prompt shows "[1]" instead of the literal "[n]" that the model had copied | 18 | 2 | 8 |
+| v4 | tokenizer splits clause numbers from words ("cl.2.3.9" → "cl", "2.3.9"); **final** | 17 | 2 | 8 |
+
+Notes on the runs:
+
+- **q36 gold widened after v1.** The fix in v2 also added a second gold passage to q36, because page 70 states the same 1.45 baseline.
+- **Run-to-run variation.** v3 and v4 differ by one test question with the same model and near-identical code. The 3B model varies by about one answer between runs.
+- **What the checks caught** in v4:
+  - q09: the model invented "1:8". The number check withheld it.
+  - q39: an extra number, "5000", appeared that is not in the cited passage. The answer was withheld.
+- **The two wrong answers** in v4:
+  - q38 is incomplete: it gives the ±5% tolerance but not the 80% condition.
+  - q33 describes the evaluation framework without the literal "KPI" that the metric looks for.
+
+**A known failure the checks miss.** Asked "How often must cooling towers be cleaned?" at a looser threshold (0.70), the model answered "every 12 months" and cited NEA clause 3.4. That clause gives 12 months for kitchen exhaust ducts, not for cooling towers. The number check passes because "12" is in the cited passage. At the default threshold of 0.725 the question is refused, because its best match scores 0.712.
+
+I tried two further checks against this failure:
+
+- **Word overlap between the question and the sentence holding the number** could not separate right from wrong. Some correct answers scored 0.08, while this wrong answer scored 0.25.
+- **A second LLM call that must confirm the claim** is available as `strict=True`. With the 3B model it rejected this case, but it also rejected 7 of 34 correct answers and neither of the two wrong ones, so it is off by default.
+
+### Requirement extraction
+
+The extractor was scored on hand-labelled passages. A match needs the same comparator, value and unit, and matching is one-to-one.
+
+| Split | Passages | Precision | Recall | F1 |
+|---|---|---|---|---|
+| Dev, first rules | 30 | 1.000 | 0.452 | 0.622 |
+| Dev, after writing rules from its errors | 30 | 1.000 | 0.984 | 0.992 |
+| **Test** (sampled and labelled only after the rules were fixed) | 20 | **0.943** | **0.717** | **0.815** |
+
+Recall on the test set is what to expect on new text. The misses are:
+
+- one comparator shared by several values ("at least 900 mm wide, 480 mm deep");
+- "from 900 mm to 1500 mm";
+- sizes stated without a comparator word;
+- symbols such as ">500mm".
+
+### Passage routing
+
+Stratified 5-fold cross-validation. Clause numbers and cross-references are removed from the text first, because they would give the chapter away.
+
+| Task | Passages | Classes | Majority | TF-IDF + LR | bge-small + LR |
+|---|---|---|---|---|---|
+| Source document | 2,180 | 8 | acc 0.638 | acc 0.988 / F1 0.958 | **acc 0.996 / F1 0.975** |
+| Fire Code chapter | 1,390 | 11 | acc 0.187 | acc 0.852 / F1 0.771 | **acc 0.895 / F1 0.864** |
+| Accessibility Code chapter | 371 | 9 | acc 0.307 | acc 0.819 / F1 0.778 | **acc 0.852 / F1 0.824** |
+
+F1 is macro-F1. The labels come from the documents' own structure, so no hand labelling was involved.
+
+## Tests
+
+`tests/test_core.py` has 38 tests:
+
+- extraction patterns;
+- BM25, fusion and the tokenizer;
+- every answer check;
+- the clause-numbering rules;
+- an end-to-end run on a generated PDF with a hashing embedder and a scripted LLM, so no model download is needed;
+- the API endpoints.
+
+`tests/mutate.py` plants 17 deliberate bugs, and every one must fail at least one test. The first run let two through: BM25's IDF weighting and the chapter-start rule. Both gaps were closed with targeted tests. The script refuses to run if the unmutated code fails its tests or a mutant does not compile, because in either case every mutant would appear "killed".
+
+## Run it
+
+```bash
+pip install -r requirements.txt
+python -m fmka.cli fetch      # official PDFs into data/raw (local use only)
+python -m fmka.cli build      # parse, embed, index into data/processed/fmka.duckdb
+python -m fmka.cli search "minimum clear width of an exit door"
+FMKA_LLM_BASE_URL=http://localhost:11434/v1 FMKA_LLM_MODEL=qwen2.5:3b-16k python -m fmka.cli ask "What is the minimum clear width of an exit door?"
+uvicorn fmka.api:app --port 8000                         # or: docker build -t fmka . && docker run -p 8000:8000 fmka
+python -m pytest -q tests && python tests/mutate.py
+FMKA_LLM_BASE_URL=... python eval/run_eval.py && python eval/eval_extraction.py
+```
+
+Run the commands from the repository root with `PYTHONPATH=src`. The Docker image fetches and indexes the documents on first start.
+
+## Limits
+
+- The corpus is eight documents. Tables and drawings are read as flattened text, so answers that live only in a table cell or a figure are weak.
+- Abstention relies on a similarity threshold chosen on 24 development questions, and the answerable and unanswerable similarity ranges overlap (0.689–0.893 against 0.683–0.741).
+- The evaluation set is small (48 questions), and I wrote it myself.

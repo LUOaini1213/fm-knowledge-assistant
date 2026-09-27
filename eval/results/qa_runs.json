@@ -1,0 +1,2183 @@
+{
+ "v1": {
+  "change": "first run",
+  "llm": "qwen2.5:3b-16k",
+  "threshold": 0.725,
+  "retrieval": {
+   "bm25": {
+    "hit@1": 0.875,
+    "hit@5": 1.0,
+    "mrr@20": 0.9333333333333332
+   },
+   "dense": {
+    "hit@1": 0.825,
+    "hit@5": 1.0,
+    "mrr@20": 0.89375
+   },
+   "hybrid": {
+    "hit@1": 0.9,
+    "hit@5": 1.0,
+    "mrr@20": 0.9458333333333334
+   }
+  },
+  "summary": {
+   "dev": {
+    "answerable": 20,
+    "answered": 16,
+    "answered_correct_and_cites_gold": 16,
+    "answered_but_wrong": 0,
+    "withheld_unverified": 3,
+    "abstained_on_answerable": 1,
+    "unanswerable": 4,
+    "unanswerable_abstained": 4,
+    "unanswerable_answered": 0
+   },
+   "test": {
+    "answerable": 20,
+    "answered": 17,
+    "answered_correct_and_cites_gold": 14,
+    "answered_but_wrong": 3,
+    "withheld_unverified": 3,
+    "abstained_on_answerable": 0,
+    "unanswerable": 4,
+    "unanswerable_abstained": 4,
+    "unanswerable_answered": 0
+   },
+   "all": {
+    "answerable": 40,
+    "answered": 33,
+    "answered_correct_and_cites_gold": 30,
+    "answered_but_wrong": 3,
+    "withheld_unverified": 6,
+    "abstained_on_answerable": 1,
+    "unanswerable": 8,
+    "unanswerable_abstained": 8,
+    "unanswerable_answered": 0
+   }
+  },
+  "rows": [
+   {
+    "id": "q01",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "unverified",
+    "correct": true,
+    "cited_gold": false,
+    "top_sim": 0.8190402115230381,
+    "problems": [
+     "no citation",
+     "numbers not found in the cited passages: ['13']"
+    ]
+   },
+   {
+    "id": "q02",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8143330052242024,
+    "problems": []
+   },
+   {
+    "id": "q03",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8580554579621212,
+    "problems": []
+   },
+   {
+    "id": "q04",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7605864714785759,
+    "problems": []
+   },
+   {
+    "id": "q05",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7978973793970192,
+    "problems": []
+   },
+   {
+    "id": "q06",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8232257353409355,
+    "problems": []
+   },
+   {
+    "id": "q07",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7922644104812439,
+    "problems": []
+   },
+   {
+    "id": "q08",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8387424747672447,
+    "problems": []
+   },
+   {
+    "id": "q09",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "unverified",
+    "correct": false,
+    "cited_gold": true,
+    "top_sim": 0.7961772939082453,
+    "problems": [
+     "numbers not found in the cited passages: ['8']"
+    ]
+   },
+   {
+    "id": "q10",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7765477447352416,
+    "problems": []
+   },
+   {
+    "id": "q11",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8785191204192391,
+    "problems": []
+   },
+   {
+    "id": "q12",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "unverified",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8122715082292107,
+    "problems": [
+     "numbers not found in the cited passages: ['181']"
+    ]
+   },
+   {
+    "id": "q13",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.726221059563373,
+    "problems": []
+   },
+   {
+    "id": "q14",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8031447916874382,
+    "problems": []
+   },
+   {
+    "id": "q15",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "abstained_low_similarity",
+    "correct": false,
+    "cited_gold": false,
+    "top_sim": 0.6886750668209489,
+    "problems": []
+   },
+   {
+    "id": "q16",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7486815085387384,
+    "problems": []
+   },
+   {
+    "id": "q17",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8753495556857436,
+    "problems": []
+   },
+   {
+    "id": "q18",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8267445227115456,
+    "problems": []
+   },
+   {
+    "id": "q19",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8417159878818303,
+    "problems": []
+   },
+   {
+    "id": "q20",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8933817555555346,
+    "problems": []
+   },
+   {
+    "id": "q21",
+    "split": "test",
+    "unanswerable": false,
+    "status": "unverified",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8501239086913772,
+    "problems": [
+     "numbers not found in the cited passages: ['2025']"
+    ]
+   },
+   {
+    "id": "q22",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7740694516075969,
+    "problems": []
+   },
+   {
+    "id": "q23",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8428896422609754,
+    "problems": []
+   },
+   {
+    "id": "q24",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.9295497720340927,
+    "problems": []
+   },
+   {
+    "id": "q25",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8241822814919282,
+    "problems": []
+   },
+   {
+    "id": "q26",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7751919120415772,
+    "problems": []
+   },
+   {
+    "id": "q27",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8196709800651032,
+    "problems": []
+   },
+   {
+    "id": "q28",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8129064366845944,
+    "problems": []
+   },
+   {
+    "id": "q29",
+    "split": "test",
+    "unanswerable": false,
+    "status": "unverified",
+    "correct": true,
+    "cited_gold": false,
+    "top_sim": 0.8117549647350888,
+    "problems": [
+     "no citation",
+     "numbers not found in the cited passages: ['0.3', '4']"
+    ]
+   },
+   {
+    "id": "q30",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8311853510653088,
+    "problems": []
+   },
+   {
+    "id": "q31",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.9271430060680599,
+    "problems": []
+   },
+   {
+    "id": "q32",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": false,
+    "top_sim": 0.8596870805104438,
+    "problems": []
+   },
+   {
+    "id": "q33",
+    "split": "test",
+    "unanswerable": false,
+    "status": "unverified",
+    "correct": false,
+    "cited_gold": false,
+    "top_sim": 0.8393695008278637,
+    "problems": [
+     "no citation"
+    ]
+   },
+   {
+    "id": "q34",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7974016965086294,
+    "problems": []
+   },
+   {
+    "id": "q35",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7978573528773454,
+    "problems": []
+   },
+   {
+    "id": "q36",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": false,
+    "top_sim": 0.8027516990469391,
+    "problems": []
+   },
+   {
+    "id": "q37",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8033193706169606,
+    "problems": []
+   },
+   {
+    "id": "q38",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": false,
+    "cited_gold": true,
+    "top_sim": 0.7680669861406505,
+    "problems": []
+   },
+   {
+    "id": "q39",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7660765608399323,
+    "problems": []
+   },
+   {
+    "id": "q40",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8478735212716686,
+    "problems": []
+   },
+   {
+    "id": "u01",
+    "split": "dev",
+    "unanswerable": true,
+    "status": "abstained_low_similarity",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.6855302265368024,
+    "problems": []
+   },
+   {
+    "id": "u02",
+    "split": "dev",
+    "unanswerable": true,
+    "status": "abstained_low_similarity",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.7227688018687477,
+    "problems": []
+   },
+   {
+    "id": "u03",
+    "split": "dev",
+    "unanswerable": true,
+    "status": "not_found",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.7412927089326801,
+    "problems": []
+   },
+   {
+    "id": "u04",
+    "split": "dev",
+    "unanswerable": true,
+    "status": "abstained_low_similarity",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.6829310904219037,
+    "problems": []
+   },
+   {
+    "id": "u05",
+    "split": "test",
+    "unanswerable": true,
+    "status": "abstained_low_similarity",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.6429984930338175,
+    "problems": []
+   },
+   {
+    "id": "u06",
+    "split": "test",
+    "unanswerable": true,
+    "status": "not_found",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.7672618767529507,
+    "problems": []
+   },
+   {
+    "id": "u07",
+    "split": "test",
+    "unanswerable": true,
+    "status": "abstained_low_similarity",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.7242032062330277,
+    "problems": []
+   },
+   {
+    "id": "u08",
+    "split": "test",
+    "unanswerable": true,
+    "status": "abstained_low_similarity",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.6521776988377165,
+    "problems": []
+   }
+  ]
+ },
+ "v2": {
+  "change": "passage header numbers count as sourced; one retry when the model forgets to cite; q36 gold widened (p70 states the same value)",
+  "llm": "qwen2.5:3b-16k",
+  "threshold": 0.725,
+  "retrieval": {
+   "bm25": {
+    "hit@1": 0.875,
+    "hit@5": 1.0,
+    "mrr@20": 0.9333333333333332
+   },
+   "dense": {
+    "hit@1": 0.825,
+    "hit@5": 1.0,
+    "mrr@20": 0.89375
+   },
+   "hybrid": {
+    "hit@1": 0.9,
+    "hit@5": 1.0,
+    "mrr@20": 0.9458333333333334
+   }
+  },
+  "summary": {
+   "dev": {
+    "answerable": 20,
+    "answered": 17,
+    "answered_correct_and_cites_gold": 17,
+    "answered_but_wrong": 0,
+    "withheld_unverified": 1,
+    "abstained_on_answerable": 2,
+    "unanswerable": 4,
+    "unanswerable_abstained": 4,
+    "unanswerable_answered": 0
+   },
+   "test": {
+    "answerable": 20,
+    "answered": 17,
+    "answered_correct_and_cites_gold": 16,
+    "answered_but_wrong": 1,
+    "withheld_unverified": 1,
+    "abstained_on_answerable": 2,
+    "unanswerable": 4,
+    "unanswerable_abstained": 4,
+    "unanswerable_answered": 0
+   },
+   "all": {
+    "answerable": 40,
+    "answered": 34,
+    "answered_correct_and_cites_gold": 33,
+    "answered_but_wrong": 1,
+    "withheld_unverified": 2,
+    "abstained_on_answerable": 4,
+    "unanswerable": 8,
+    "unanswerable_abstained": 8,
+    "unanswerable_answered": 0
+   }
+  },
+  "rows": [
+   {
+    "id": "q01",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8190402115230381,
+    "problems": []
+   },
+   {
+    "id": "q02",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8143330052242024,
+    "problems": []
+   },
+   {
+    "id": "q03",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8580554579621212,
+    "problems": []
+   },
+   {
+    "id": "q04",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7605864714785759,
+    "problems": []
+   },
+   {
+    "id": "q05",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7978973793970192,
+    "problems": []
+   },
+   {
+    "id": "q06",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8232257353409355,
+    "problems": []
+   },
+   {
+    "id": "q07",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7922644104812439,
+    "problems": []
+   },
+   {
+    "id": "q08",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8387424747672447,
+    "problems": []
+   },
+   {
+    "id": "q09",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "unverified",
+    "correct": false,
+    "cited_gold": true,
+    "top_sim": 0.7961772939082453,
+    "problems": [
+     "numbers not found in the cited passages: ['8']"
+    ]
+   },
+   {
+    "id": "q10",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7765477447352416,
+    "problems": []
+   },
+   {
+    "id": "q11",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8785191204192391,
+    "problems": []
+   },
+   {
+    "id": "q12",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "not_found",
+    "correct": false,
+    "cited_gold": false,
+    "top_sim": 0.8122715082292107,
+    "problems": []
+   },
+   {
+    "id": "q13",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.726221059563373,
+    "problems": []
+   },
+   {
+    "id": "q14",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8031447916874382,
+    "problems": []
+   },
+   {
+    "id": "q15",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "abstained_low_similarity",
+    "correct": false,
+    "cited_gold": false,
+    "top_sim": 0.6886750668209489,
+    "problems": []
+   },
+   {
+    "id": "q16",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7486815085387384,
+    "problems": []
+   },
+   {
+    "id": "q17",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8753495556857436,
+    "problems": []
+   },
+   {
+    "id": "q18",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8267445227115456,
+    "problems": []
+   },
+   {
+    "id": "q19",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8417159878818303,
+    "problems": []
+   },
+   {
+    "id": "q20",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8933817555555346,
+    "problems": []
+   },
+   {
+    "id": "q21",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8501239086913772,
+    "problems": []
+   },
+   {
+    "id": "q22",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7740694516075969,
+    "problems": []
+   },
+   {
+    "id": "q23",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8428896422609754,
+    "problems": []
+   },
+   {
+    "id": "q24",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.9295497720340927,
+    "problems": []
+   },
+   {
+    "id": "q25",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8241822814919282,
+    "problems": []
+   },
+   {
+    "id": "q26",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7751919120415772,
+    "problems": []
+   },
+   {
+    "id": "q27",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8196709800651032,
+    "problems": []
+   },
+   {
+    "id": "q28",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8129064366845944,
+    "problems": []
+   },
+   {
+    "id": "q29",
+    "split": "test",
+    "unanswerable": false,
+    "status": "unverified",
+    "correct": true,
+    "cited_gold": false,
+    "top_sim": 0.8117549647350888,
+    "problems": [
+     "no citation",
+     "numbers not found in the cited passages: ['0.3', '4']"
+    ]
+   },
+   {
+    "id": "q30",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8311853510653088,
+    "problems": []
+   },
+   {
+    "id": "q31",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.9271430060680599,
+    "problems": []
+   },
+   {
+    "id": "q32",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8596870805104438,
+    "problems": []
+   },
+   {
+    "id": "q33",
+    "split": "test",
+    "unanswerable": false,
+    "status": "not_found",
+    "correct": false,
+    "cited_gold": false,
+    "top_sim": 0.8393695008278637,
+    "problems": []
+   },
+   {
+    "id": "q34",
+    "split": "test",
+    "unanswerable": false,
+    "status": "not_found",
+    "correct": false,
+    "cited_gold": false,
+    "top_sim": 0.7974016965086294,
+    "problems": []
+   },
+   {
+    "id": "q35",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7978573528773454,
+    "problems": []
+   },
+   {
+    "id": "q36",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8027516990469391,
+    "problems": []
+   },
+   {
+    "id": "q37",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8033193706169606,
+    "problems": []
+   },
+   {
+    "id": "q38",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": false,
+    "cited_gold": true,
+    "top_sim": 0.7680669861406505,
+    "problems": []
+   },
+   {
+    "id": "q39",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7660765608399323,
+    "problems": []
+   },
+   {
+    "id": "q40",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8478735212716686,
+    "problems": []
+   },
+   {
+    "id": "u01",
+    "split": "dev",
+    "unanswerable": true,
+    "status": "abstained_low_similarity",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.6855302265368024,
+    "problems": []
+   },
+   {
+    "id": "u02",
+    "split": "dev",
+    "unanswerable": true,
+    "status": "abstained_low_similarity",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.7227688018687477,
+    "problems": []
+   },
+   {
+    "id": "u03",
+    "split": "dev",
+    "unanswerable": true,
+    "status": "not_found",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.7412927089326801,
+    "problems": []
+   },
+   {
+    "id": "u04",
+    "split": "dev",
+    "unanswerable": true,
+    "status": "abstained_low_similarity",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.6829310904219037,
+    "problems": []
+   },
+   {
+    "id": "u05",
+    "split": "test",
+    "unanswerable": true,
+    "status": "abstained_low_similarity",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.6429984930338175,
+    "problems": []
+   },
+   {
+    "id": "u06",
+    "split": "test",
+    "unanswerable": true,
+    "status": "not_found",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.7672618767529507,
+    "problems": []
+   },
+   {
+    "id": "u07",
+    "split": "test",
+    "unanswerable": true,
+    "status": "abstained_low_similarity",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.7242032062330277,
+    "problems": []
+   },
+   {
+    "id": "u08",
+    "split": "test",
+    "unanswerable": true,
+    "status": "abstained_low_similarity",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.6521776988377165,
+    "problems": []
+   }
+  ]
+ },
+ "v3": {
+  "change": "retry prompt shows [1]/[2] instead of the literal [n] the model copied",
+  "llm": "qwen2.5:3b-16k",
+  "threshold": 0.725,
+  "retrieval": {
+   "bm25": {
+    "hit@1": 0.875,
+    "hit@5": 1.0,
+    "mrr@20": 0.9333333333333332
+   },
+   "dense": {
+    "hit@1": 0.825,
+    "hit@5": 1.0,
+    "mrr@20": 0.89375
+   },
+   "hybrid": {
+    "hit@1": 0.9,
+    "hit@5": 1.0,
+    "mrr@20": 0.9458333333333334
+   }
+  },
+  "summary": {
+   "dev": {
+    "answerable": 20,
+    "answered": 17,
+    "answered_correct_and_cites_gold": 17,
+    "answered_but_wrong": 0,
+    "withheld_unverified": 1,
+    "abstained_on_answerable": 2,
+    "unanswerable": 4,
+    "unanswerable_abstained": 4,
+    "unanswerable_answered": 0
+   },
+   "test": {
+    "answerable": 20,
+    "answered": 20,
+    "answered_correct_and_cites_gold": 18,
+    "answered_but_wrong": 2,
+    "withheld_unverified": 0,
+    "abstained_on_answerable": 0,
+    "unanswerable": 4,
+    "unanswerable_abstained": 4,
+    "unanswerable_answered": 0
+   },
+   "all": {
+    "answerable": 40,
+    "answered": 37,
+    "answered_correct_and_cites_gold": 35,
+    "answered_but_wrong": 2,
+    "withheld_unverified": 1,
+    "abstained_on_answerable": 2,
+    "unanswerable": 8,
+    "unanswerable_abstained": 8,
+    "unanswerable_answered": 0
+   }
+  },
+  "rows": [
+   {
+    "id": "q01",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "not_found",
+    "correct": false,
+    "cited_gold": false,
+    "top_sim": 0.8190402115230381,
+    "problems": []
+   },
+   {
+    "id": "q02",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8143330052242024,
+    "problems": []
+   },
+   {
+    "id": "q03",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8580554579621212,
+    "problems": []
+   },
+   {
+    "id": "q04",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7605864714785759,
+    "problems": []
+   },
+   {
+    "id": "q05",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7978973793970192,
+    "problems": []
+   },
+   {
+    "id": "q06",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8232257353409355,
+    "problems": []
+   },
+   {
+    "id": "q07",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7922644104812439,
+    "problems": []
+   },
+   {
+    "id": "q08",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8387424747672447,
+    "problems": []
+   },
+   {
+    "id": "q09",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "unverified",
+    "correct": false,
+    "cited_gold": true,
+    "top_sim": 0.7961772939082453,
+    "problems": [
+     "numbers not found in the cited passages: ['8']"
+    ]
+   },
+   {
+    "id": "q10",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7765477447352416,
+    "problems": []
+   },
+   {
+    "id": "q11",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8785191204192391,
+    "problems": []
+   },
+   {
+    "id": "q12",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8122715082292107,
+    "problems": []
+   },
+   {
+    "id": "q13",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.726221059563373,
+    "problems": []
+   },
+   {
+    "id": "q14",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8031447916874382,
+    "problems": []
+   },
+   {
+    "id": "q15",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "abstained_low_similarity",
+    "correct": false,
+    "cited_gold": false,
+    "top_sim": 0.6886750668209489,
+    "problems": []
+   },
+   {
+    "id": "q16",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7486815085387384,
+    "problems": []
+   },
+   {
+    "id": "q17",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8753495556857436,
+    "problems": []
+   },
+   {
+    "id": "q18",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8267445227115456,
+    "problems": []
+   },
+   {
+    "id": "q19",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8417159878818303,
+    "problems": []
+   },
+   {
+    "id": "q20",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8933817555555346,
+    "problems": []
+   },
+   {
+    "id": "q21",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8501239086913772,
+    "problems": []
+   },
+   {
+    "id": "q22",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7740694516075969,
+    "problems": []
+   },
+   {
+    "id": "q23",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8428896422609754,
+    "problems": []
+   },
+   {
+    "id": "q24",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.9295497720340927,
+    "problems": []
+   },
+   {
+    "id": "q25",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8241822814919282,
+    "problems": []
+   },
+   {
+    "id": "q26",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7751919120415772,
+    "problems": []
+   },
+   {
+    "id": "q27",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8196709800651032,
+    "problems": []
+   },
+   {
+    "id": "q28",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8129064366845944,
+    "problems": []
+   },
+   {
+    "id": "q29",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8117549647350888,
+    "problems": []
+   },
+   {
+    "id": "q30",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8311853510653088,
+    "problems": []
+   },
+   {
+    "id": "q31",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.9271430060680599,
+    "problems": []
+   },
+   {
+    "id": "q32",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8596870805104438,
+    "problems": []
+   },
+   {
+    "id": "q33",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": false,
+    "cited_gold": true,
+    "top_sim": 0.8393695008278637,
+    "problems": []
+   },
+   {
+    "id": "q34",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7974016965086294,
+    "problems": []
+   },
+   {
+    "id": "q35",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7978573528773454,
+    "problems": []
+   },
+   {
+    "id": "q36",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8027516990469391,
+    "problems": []
+   },
+   {
+    "id": "q37",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8033193706169606,
+    "problems": []
+   },
+   {
+    "id": "q38",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": false,
+    "cited_gold": true,
+    "top_sim": 0.7680669861406505,
+    "problems": []
+   },
+   {
+    "id": "q39",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7660765608399323,
+    "problems": []
+   },
+   {
+    "id": "q40",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8478735212716686,
+    "problems": []
+   },
+   {
+    "id": "u01",
+    "split": "dev",
+    "unanswerable": true,
+    "status": "abstained_low_similarity",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.6855302265368024,
+    "problems": []
+   },
+   {
+    "id": "u02",
+    "split": "dev",
+    "unanswerable": true,
+    "status": "abstained_low_similarity",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.7227688018687477,
+    "problems": []
+   },
+   {
+    "id": "u03",
+    "split": "dev",
+    "unanswerable": true,
+    "status": "not_found",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.7412927089326801,
+    "problems": []
+   },
+   {
+    "id": "u04",
+    "split": "dev",
+    "unanswerable": true,
+    "status": "abstained_low_similarity",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.6829310904219037,
+    "problems": []
+   },
+   {
+    "id": "u05",
+    "split": "test",
+    "unanswerable": true,
+    "status": "abstained_low_similarity",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.6429984930338175,
+    "problems": []
+   },
+   {
+    "id": "u06",
+    "split": "test",
+    "unanswerable": true,
+    "status": "not_found",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.7672618767529507,
+    "problems": []
+   },
+   {
+    "id": "u07",
+    "split": "test",
+    "unanswerable": true,
+    "status": "abstained_low_similarity",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.7242032062330277,
+    "problems": []
+   },
+   {
+    "id": "u08",
+    "split": "test",
+    "unanswerable": true,
+    "status": "abstained_low_similarity",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.6521776988377165,
+    "problems": []
+   }
+  ]
+ },
+ "v4": {
+  "change": "tokenizer splits clause numbers from words (cl.2.3.9 -> cl, 2.3.9); final",
+  "llm": "qwen2.5:3b-16k",
+  "threshold": 0.725,
+  "retrieval": {
+   "bm25": {
+    "hit@1": 0.875,
+    "hit@5": 1.0,
+    "mrr@20": 0.9333333333333332
+   },
+   "dense": {
+    "hit@1": 0.825,
+    "hit@5": 1.0,
+    "mrr@20": 0.89375
+   },
+   "hybrid": {
+    "hit@1": 0.9,
+    "hit@5": 1.0,
+    "mrr@20": 0.9458333333333334
+   }
+  },
+  "summary": {
+   "dev": {
+    "answerable": 20,
+    "answered": 17,
+    "answered_correct_and_cites_gold": 17,
+    "answered_but_wrong": 0,
+    "withheld_unverified": 1,
+    "abstained_on_answerable": 2,
+    "unanswerable": 4,
+    "unanswerable_abstained": 4,
+    "unanswerable_answered": 0
+   },
+   "test": {
+    "answerable": 20,
+    "answered": 19,
+    "answered_correct_and_cites_gold": 17,
+    "answered_but_wrong": 2,
+    "withheld_unverified": 1,
+    "abstained_on_answerable": 0,
+    "unanswerable": 4,
+    "unanswerable_abstained": 4,
+    "unanswerable_answered": 0
+   },
+   "all": {
+    "answerable": 40,
+    "answered": 36,
+    "answered_correct_and_cites_gold": 34,
+    "answered_but_wrong": 2,
+    "withheld_unverified": 2,
+    "abstained_on_answerable": 2,
+    "unanswerable": 8,
+    "unanswerable_abstained": 8,
+    "unanswerable_answered": 0
+   }
+  },
+  "rows": [
+   {
+    "id": "q01",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "not_found",
+    "correct": false,
+    "cited_gold": false,
+    "top_sim": 0.8190402115230381,
+    "problems": []
+   },
+   {
+    "id": "q02",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8143330052242024,
+    "problems": []
+   },
+   {
+    "id": "q03",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8580554579621212,
+    "problems": []
+   },
+   {
+    "id": "q04",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7605864714785759,
+    "problems": []
+   },
+   {
+    "id": "q05",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7978973793970192,
+    "problems": []
+   },
+   {
+    "id": "q06",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8232257353409355,
+    "problems": []
+   },
+   {
+    "id": "q07",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7922644104812439,
+    "problems": []
+   },
+   {
+    "id": "q08",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8387424747672447,
+    "problems": []
+   },
+   {
+    "id": "q09",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "unverified",
+    "correct": false,
+    "cited_gold": true,
+    "top_sim": 0.7961772939082453,
+    "problems": [
+     "numbers not found in the cited passages: ['8']"
+    ]
+   },
+   {
+    "id": "q10",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7765477447352416,
+    "problems": []
+   },
+   {
+    "id": "q11",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8785191204192391,
+    "problems": []
+   },
+   {
+    "id": "q12",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8122715082292107,
+    "problems": []
+   },
+   {
+    "id": "q13",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.726221059563373,
+    "problems": []
+   },
+   {
+    "id": "q14",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8031447916874382,
+    "problems": []
+   },
+   {
+    "id": "q15",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "abstained_low_similarity",
+    "correct": false,
+    "cited_gold": false,
+    "top_sim": 0.6886750668209489,
+    "problems": []
+   },
+   {
+    "id": "q16",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7486815085387384,
+    "problems": []
+   },
+   {
+    "id": "q17",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8753495556857436,
+    "problems": []
+   },
+   {
+    "id": "q18",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8267445227115456,
+    "problems": []
+   },
+   {
+    "id": "q19",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8417159878818303,
+    "problems": []
+   },
+   {
+    "id": "q20",
+    "split": "dev",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8933817555555346,
+    "problems": []
+   },
+   {
+    "id": "q21",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8501239086913772,
+    "problems": []
+   },
+   {
+    "id": "q22",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7740694516075969,
+    "problems": []
+   },
+   {
+    "id": "q23",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8428896422609754,
+    "problems": []
+   },
+   {
+    "id": "q24",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.9295497720340927,
+    "problems": []
+   },
+   {
+    "id": "q25",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8241822814919282,
+    "problems": []
+   },
+   {
+    "id": "q26",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7751919120415772,
+    "problems": []
+   },
+   {
+    "id": "q27",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8196709800651032,
+    "problems": []
+   },
+   {
+    "id": "q28",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8129064366845944,
+    "problems": []
+   },
+   {
+    "id": "q29",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8117549647350888,
+    "problems": []
+   },
+   {
+    "id": "q30",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8311853510653088,
+    "problems": []
+   },
+   {
+    "id": "q31",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.9271430060680599,
+    "problems": []
+   },
+   {
+    "id": "q32",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8596870805104438,
+    "problems": []
+   },
+   {
+    "id": "q33",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": false,
+    "cited_gold": true,
+    "top_sim": 0.8393695008278637,
+    "problems": []
+   },
+   {
+    "id": "q34",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7974016965086294,
+    "problems": []
+   },
+   {
+    "id": "q35",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7978573528773454,
+    "problems": []
+   },
+   {
+    "id": "q36",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8027516990469391,
+    "problems": []
+   },
+   {
+    "id": "q37",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8033193706169606,
+    "problems": []
+   },
+   {
+    "id": "q38",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": false,
+    "cited_gold": true,
+    "top_sim": 0.7680669861406505,
+    "problems": []
+   },
+   {
+    "id": "q39",
+    "split": "test",
+    "unanswerable": false,
+    "status": "unverified",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.7660765608399323,
+    "problems": [
+     "numbers not found in the cited passages: ['5000']"
+    ]
+   },
+   {
+    "id": "q40",
+    "split": "test",
+    "unanswerable": false,
+    "status": "answered",
+    "correct": true,
+    "cited_gold": true,
+    "top_sim": 0.8478735212716686,
+    "problems": []
+   },
+   {
+    "id": "u01",
+    "split": "dev",
+    "unanswerable": true,
+    "status": "abstained_low_similarity",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.6855302265368024,
+    "problems": []
+   },
+   {
+    "id": "u02",
+    "split": "dev",
+    "unanswerable": true,
+    "status": "abstained_low_similarity",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.7227688018687477,
+    "problems": []
+   },
+   {
+    "id": "u03",
+    "split": "dev",
+    "unanswerable": true,
+    "status": "not_found",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.7412927089326801,
+    "problems": []
+   },
+   {
+    "id": "u04",
+    "split": "dev",
+    "unanswerable": true,
+    "status": "abstained_low_similarity",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.6829310904219037,
+    "problems": []
+   },
+   {
+    "id": "u05",
+    "split": "test",
+    "unanswerable": true,
+    "status": "abstained_low_similarity",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.6429984930338175,
+    "problems": []
+   },
+   {
+    "id": "u06",
+    "split": "test",
+    "unanswerable": true,
+    "status": "not_found",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.7672618767529507,
+    "problems": []
+   },
+   {
+    "id": "u07",
+    "split": "test",
+    "unanswerable": true,
+    "status": "abstained_low_similarity",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.7242032062330277,
+    "problems": []
+   },
+   {
+    "id": "u08",
+    "split": "test",
+    "unanswerable": true,
+    "status": "abstained_low_similarity",
+    "correct": null,
+    "cited_gold": false,
+    "top_sim": 0.6515990654139044,
+    "problems": []
+   }
+  ]
+ }
+}

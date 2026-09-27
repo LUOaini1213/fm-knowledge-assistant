@@ -1,0 +1,50 @@
+{"chunk_id": 1649, "split": "dev", "gold": [["min", 5000, "m2"], ["min", 5000, "m2"], ["min", 5000, "m2"], ["min", 5000, "m2"]]}
+{"chunk_id": 519, "split": "dev", "gold": []}
+{"chunk_id": 166, "split": "dev", "gold": [["min", 2, "persons"]]}
+{"chunk_id": 1756, "split": "dev", "gold": [["min", 1800, "mm"]]}
+{"chunk_id": 583, "split": "dev", "gold": [["max", 50, "mm"]]}
+{"chunk_id": 1875, "split": "dev", "gold": [["min", 5, "days"]]}
+{"chunk_id": 1499, "split": "dev", "gold": [["range", 1400, "mm", 1600], ["range", 850, "mm", 1000]]}
+{"chunk_id": 1009, "split": "dev", "gold": [["min", 2, "m"]]}
+{"chunk_id": 1015, "split": "dev", "gold": [["max", 15, "m"], ["max", 4, "storeys"], ["max", 200, "m2"], ["max", 30, "persons"]]}
+{"chunk_id": 1438, "split": "dev", "gold": [["min", 1200, "mm"]]}
+{"chunk_id": 1507, "split": "dev", "gold": [["min", 140, "mm"], ["range", 60, "mm", 130]]}
+{"chunk_id": 1599, "split": "dev", "gold": []}
+{"chunk_id": 545, "split": "dev", "gold": []}
+{"chunk_id": 576, "split": "dev", "gold": [["min", 24, "m"], ["min", 1.5, "m"], ["min", 600, "mm"]]}
+{"chunk_id": 631, "split": "dev", "gold": [["max", 18, "m"]]}
+{"chunk_id": 1666, "split": "dev", "gold": [["max", 400, "mm"]]}
+{"chunk_id": 569, "split": "dev", "gold": [["min", 24, "m"], ["max", 200, "°C"]]}
+{"chunk_id": 1692, "split": "dev", "gold": [["max", 25, "mm"], ["min", 1000, "mm"], ["min", 1000, "mm"], ["min", 450, "mm"]]}
+{"chunk_id": 1163, "split": "dev", "gold": []}
+{"chunk_id": 155, "split": "dev", "gold": [["max", 20, "persons"]]}
+{"chunk_id": 1502, "split": "dev", "gold": [["min", 600, "mm"], ["min", 1500, "mm"], ["min", 300, "mm"], ["min", 1200, "mm"], ["min", 300, "mm"], ["min", 1200, "mm"]]}
+{"chunk_id": 543, "split": "dev", "gold": []}
+{"chunk_id": 1090, "split": "dev", "gold": [["max", 50, "%"], ["max", 50, "m2"], ["min", 1, "hours"]]}
+{"chunk_id": 792, "split": "dev", "gold": [["max", 5, "m"], ["max", 10, "m"], ["min", 5, "m"]]}
+{"chunk_id": 179, "split": "dev", "gold": [["min", 300, "mm"], ["min", 300, "mm"], ["max", 500, "mm"]]}
+{"chunk_id": 1663, "split": "dev", "gold": [["range", 250, "mm", 350], ["range", 500, "mm", 900]]}
+{"chunk_id": 1038, "split": "dev", "gold": [["min", 1, "m"], ["max", 2, "m"], ["min", 1, "m"], ["max", 2, "m"], ["min", 2, "m"], ["max", 3, "m"], ["min", 2, "m"], ["max", 3, "m"]]}
+{"chunk_id": 1511, "split": "dev", "gold": []}
+{"chunk_id": 474, "split": "dev", "gold": [["max", 10, "mm"], ["max", 20, "mm"], ["min", 10, "mm"], ["max", 25, "mm"], ["min", 25, "mm"]]}
+{"chunk_id": 1478, "split": "dev", "gold": [["range", 580, "mm", 2000], ["max", 300, "mm"]]}
+{"chunk_id": 1513, "split": "test", "gold": [["max", 175, "mm"]]}
+{"chunk_id": 527, "split": "test", "gold": []}
+{"chunk_id": 180, "split": "test", "gold": [["min", 500, "mm"], ["max", 300, "mm"], ["min", 300, "mm"]]}
+{"chunk_id": 1695, "split": "test", "gold": [["range", 450, "mm", 1200]]}
+{"chunk_id": 1509, "split": "test", "gold": [["range", 900, "mm", 1500], ["min", 100, "mm"]]}
+{"chunk_id": 696, "split": "test", "gold": [["min", 70, "m2"]]}
+{"chunk_id": 888, "split": "test", "gold": [["min", 5, "m"]]}
+{"chunk_id": 1733, "split": "test", "gold": [["min", 900, "mm"], ["min", 480, "mm"], ["min", 700, "mm"], ["max", 480, "mm"]]}
+{"chunk_id": 1684, "split": "test", "gold": [["min", 850, "mm"], ["min", 850, "mm"]]}
+{"chunk_id": 1506, "split": "test", "gold": []}
+{"chunk_id": 1153, "split": "test", "gold": [["max", 18, "m"], ["min", 4, "m"], ["max", 50, "m"], ["min", 2, "hours"]]}
+{"chunk_id": 1792, "split": "test", "gold": [["max", 150, "mm"], ["min", 300, "mm"], ["min", 300, "mm"]]}
+{"chunk_id": 538, "split": "test", "gold": []}
+{"chunk_id": 1567, "split": "test", "gold": [["min", 1100, "mm"], ["min", 1400, "mm"]]}
+{"chunk_id": 1739, "split": "test", "gold": [["min", 350, "mm"], ["range", 450, "mm", 1200], ["min", 900, "mm"], ["min", 1200, "mm"], ["max", 22, "n"]]}
+{"chunk_id": 1621, "split": "test", "gold": [["range", 19, "mm", 45], ["range", 19, "mm", 45], ["min", 600, "mm"], ["max", 130, "mm"], ["max", 130, "mm"], ["range", 900, "mm", 1100], ["range", 900, "mm", 1100], ["min", 140, "mm"]]}
+{"chunk_id": 1583, "split": "test", "gold": [["min", 20000, "m2"]]}
+{"chunk_id": 1672, "split": "test", "gold": [["range", 5000, "m2", 20000], ["min", 5000, "m2"]]}
+{"chunk_id": 886, "split": "test", "gold": [["min", 1.5, "m"], ["max", 1.8, "m"], ["min", 1.5, "m"], ["min", 1, "hours"]]}
+{"chunk_id": 760, "split": "test", "gold": [["min", 50, "%"], ["max", 5, "m"]]}

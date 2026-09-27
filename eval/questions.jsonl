@@ -1,0 +1,48 @@
+{"id": "q01", "q": "Beyond what distance from a corridor entry point does an occupied area need emergency lighting along its paths?", "gold": [["firecode2023", "8.1.3"]], "expect": ["13"]}
+{"id": "q02", "q": "What is the minimum size of each smoke vent that may replace engineered smoke control in a single-tier auditorium?", "gold": [["firecode2023", "9.7.3"]], "expect": ["600"]}
+{"id": "q03", "q": "How far may a person have to travel from an EV charging station to reach the emergency main isolation switch?", "gold": [["firecode2023", "10.4.2"], ["firecode2023", "9.6.2"]], "expect": ["15"]}
+{"id": "q04", "q": "What ventilation opening area is required for the common internal corridor serving hotel guestrooms?", "gold": [["firecode2023", "9.7.2"]], "expect": ["15%"]}
+{"id": "q05", "q": "What fire resistance rating separates each hotel guestroom from the internal corridor and adjoining rooms?", "gold": [["firecode2023", "9.7.2"]], "expect": ["1 hour"]}
+{"id": "q06", "q": "What minimum tread length must a spiral staircase have to count as a required exit?", "gold": [["firecode2023", "2.3.7"]], "expect": ["750"]}
+{"id": "q07", "q": "What is the maximum occupant load of a storey that a spiral staircase serving as an exit may serve?", "gold": [["firecode2023", "2.3.7"]], "expect": ["25"]}
+{"id": "q08", "q": "What minimum pressure and flow rate must the sprinkler inside each capsule of a capsule hotel achieve?", "gold": [["firecode2023", "9.7.2"]], "expect": ["50", "56"]}
+{"id": "q09", "q": "How wide must a fire engine access road be?", "gold": [["firecode2023", "4.2"], ["firecode2023", "4.2.1"], ["firecode2023", "4.2.2"]], "expect": ["4"]}
+{"id": "q10", "q": "At what interval must red colour bands be applied on fire protection pipework that is not painted red?", "gold": [["firecode2023", "6.7.2"]], "expect": ["6"]}
+{"id": "q11", "q": "What is the minimum clear width required for exit doors?", "gold": [["firecode2023", "2.2.7"], ["firecode2023", "2.2.9"]], "expect": ["850"]}
+{"id": "q12", "q": "Within what direct distance from the furthest point is an exit sign not needed in a single-door room without emergency lighting?", "gold": [["firecode2023", "8.1.7"]], "expect": ["7"]}
+{"id": "q13", "q": "When the roof over a warehouse loading area abuts an external space, up to what depth is compartmentation to the warehouse not required?", "gold": [["firecode2023", "9.8.3"]], "expect": ["3"]}
+{"id": "q14", "q": "How high can a spiral staircase used as an exit be at most?", "gold": [["firecode2023", "2.3.7"]], "expect": ["10"]}
+{"id": "q15", "q": "What is the maximum run of a ramp with a gradient of 1:12?", "gold": [["accessibility2025", "4.6.5.2"], ["accessibility2025", "4.6.5.1"]], "expect": ["6000"]}
+{"id": "q16", "q": "How deep must the level landing of a ramp be?", "gold": [["accessibility2025", "4.6.5.2"]], "expect": ["1500"]}
+{"id": "q17", "q": "What seat height range applies to a child-sized water closet?", "gold": [["accessibility2025", "6.5.3"]], "expect": ["250", "350"]}
+{"id": "q18", "q": "What clear door opening and floor space must a platform lift provide?", "gold": [["accessibility2025", "4.10.2.1"]], "expect": ["900", "1500"]}
+{"id": "q19", "q": "How far should the centreline of an accessible water closet be from the adjacent wall?", "gold": [["accessibility2025", "5.8.6.1"]], "expect": ["460", "480"]}
+{"id": "q20", "q": "What are the minimum internal dimensions of an accessible water closet cubicle for ambulant users?", "gold": [["accessibility2025", "5.6.1"]], "expect": ["1500", "1750"]}
+{"id": "q21", "q": "What clear floor space must be provided for wheelchairs to turn inside an accessible guestroom?", "gold": [["accessibility2025", "7.5.6"]], "expect": ["1500"]}
+{"id": "q22", "q": "To what width may a ramp be reduced if a stepped approach is provided alongside?", "gold": [["accessibility2025", "4.6.3.1"]], "expect": ["1200"]}
+{"id": "q23", "q": "When must a passing space be provided on an accessible route, and how big is it?", "gold": [["accessibility2025", "4.2.1.2"]], "expect": ["1800"]}
+{"id": "q24", "q": "What is the minimum internal size of a lift car in the accessibility code?", "gold": [["accessibility2025", "4.9.2.1"]], "expect": ["1200", "1500"]}
+{"id": "q25", "q": "What is the largest wheeled refuse bin allowed in a refuse chute chamber?", "gold": [["copeh2024", "1.4"]], "expect": ["660"]}
+{"id": "q26", "q": "How many days of refuse output must a refuse room be able to hold?", "gold": [["copeh2024", "1.5"]], "expect": ["two", "2"]}
+{"id": "q27", "q": "What clear height must the screw tank room have in a pneumatic waste conveyance development?", "gold": [["copeh2024", "1.7.1"], ["copeh2024", "1.7"]], "expect": ["5"]}
+{"id": "q28", "q": "How much water may a sensor-operated flush valve discharge per flush for a WC?", "gold": [["copeh2024", "7.4"]], "expect": ["4.5"]}
+{"id": "q29", "q": "Above how many storeys must residential buildings have refuse chutes, and what is the chute's minimum cross-section?", "gold": [["copeh2024", "1.3"]], "expect": ["4", "0.3"]}
+{"id": "q30", "q": "What minimum separation is required between the roller shutter frame and the RORO compactor in a bin centre?", "gold": [["copeh2024", "1.6"]], "expect": ["0.5"]}
+{"id": "q31", "q": "How early must a structural engineer apply to BCA for an extension of a periodic structural inspection deadline?", "gold": [["psi_engineer2024", "2.3"]], "expect": ["5"]}
+{"id": "q32", "q": "What share of cladded columns must the structural engineer expose during a periodic structural inspection of a residential building?", "gold": [["psi_engineer2024", "4.3.1"], ["psi_engineer2024", "4.3"]], "expect": ["30%"]}
+{"id": "q33", "q": "In an outcome-based lift maintenance contract, how is the service provider's performance measured?", "gold": [["lift_obc2024", "p13"], ["lift_obc2024", "p7"], ["lift_obc2024", "p14"]], "expect": ["KPI"]}
+{"id": "q34", "q": "How far above the ground should exposed steel bases be raised to reduce corrosion under Green Mark maintainability?", "gold": [["gm_maintainability_eb", "p60"]], "expect": ["100"]}
+{"id": "q35", "q": "What is the maximum study period for a life cycle cost analysis in the Green Mark maintainability section?", "gold": [["gm_maintainability_eb", "p10"]], "expect": ["30"]}
+{"id": "q36", "q": "What Hot Water System Ratio baseline applies to hotels and hospitals under Green Mark energy efficiency?", "gold": [["gm_energy", "p52"], ["gm_energy", "p70"]], "expect": ["1.45"], "note": "p70 (hospital parameter table) added after evaluation v1: it states the same 1.45 baseline"}
+{"id": "q37", "q": "What accuracy class must dedicated power meters for chilled-water plant equipment have?", "gold": [["gm_energy", "p13"]], "expect": ["Class 1"]}
+{"id": "q38", "q": "What heat balance tolerance must a chilled-water plant's M&V instrumentation meet?", "gold": [["gm_energy", "p13"]], "expect": ["5%", "80%"]}
+{"id": "q39", "q": "Under what conditions is a lecture theatre exempted from providing smoke vents?", "gold": [["firecode2023", "9.7.3"]], "expect": ["Lecture theatre"]}
+{"id": "q40", "q": "What passageway width is required from the bathroom doorway to the water closet in an accessible residential unit?", "gold": [["accessibility2025", "7.3.4"]], "expect": ["1000"]}
+{"id": "u01", "q": "What is the minimum illuminance in lux required for an office workstation?", "gold": [], "expect": [], "unanswerable": true}
+{"id": "u02", "q": "How often must a cooling tower be chemically cleaned to control Legionella?", "gold": [], "expect": [], "unanswerable": true}
+{"id": "u03", "q": "What is the maximum noise level allowed from a construction site at night in a residential area?", "gold": [], "expect": [], "unanswerable": true}
+{"id": "u04", "q": "What is the rated speed of a firefighting lift in metres per second?", "gold": [], "expect": [], "unanswerable": true}
+{"id": "u05", "q": "What service charge must a management corporation collect per share value?", "gold": [], "expect": [], "unanswerable": true}
+{"id": "u06", "q": "What minimum rainfall intensity must roof gutters be designed for?", "gold": [], "expect": [], "unanswerable": true}
+{"id": "u07", "q": "How many parking lots must be reserved for electric vehicle charging in a new car park?", "gold": [], "expect": [], "unanswerable": true}
+{"id": "u08", "q": "What is the permitted indoor carbon dioxide concentration in ppm for office air quality?", "gold": [], "expect": [], "unanswerable": true}

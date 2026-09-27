@@ -1,0 +1,76 @@
+[
+ {
+  "id": "firecode2023",
+  "file": "d1.pdf",
+  "numbered": true,
+  "agency": "SCDF",
+  "title": "Code of Practice for Fire Precautions in Buildings 2023",
+  "url": "https://www.scdf.gov.sg/docs/default-source/fire-safety-docs/firecode-2023-111220241013.pdf?sfvrsn=b3dc3c15_3",
+  "skip_pages": 3,
+  "sha256": "fd8c30cb5b839eccf5bf25edc0aba4d8872d901478d85d5a52845d2671a6841f"
+ },
+ {
+  "id": "accessibility2025",
+  "file": "d2.pdf",
+  "numbered": true,
+  "agency": "BCA",
+  "title": "Code on Accessibility in the Built Environment 2025 (v1.1)",
+  "url": "https://file.go.gov.sg/bca-coa2025.pdf",
+  "skip_pages": 7,
+  "sha256": "846c3044c1745df728b33ff56b2be3b7cb21a904066a3a9e2b96363f603ae8ed"
+ },
+ {
+  "id": "copeh2024",
+  "file": "d5.pdf",
+  "numbered": true,
+  "agency": "NEA",
+  "title": "Code of Practice on Environmental Health (2024 Edition)",
+  "url": "https://www.nea.gov.sg/docs/default-source/resource/practices-/copeh-2024.pdf",
+  "sha256": "79ac00f0859724f31d880a916240881d178a1a0b752b480726ea4cb25057c907"
+ },
+ {
+  "id": "lift_obc2024",
+  "file": "d6.pdf",
+  "numbered": false,
+  "agency": "BCA",
+  "title": "Guide on Specifications for Outcome-Based Lift Maintenance Contracts v1.0 (2024)",
+  "url": "https://isomer-user-content.by.gov.sg/338/0f61d47b-fff1-4ddb-97ab-f2e29fff9141/guide-on-specifications-for-outcome-based-lift-maintenance-contracts.pdf",
+  "sha256": "7d9e3f7a75bb61c278544672d730e0182a1405b27184e63df7abbedd3ad6f155"
+ },
+ {
+  "id": "psi_owner2024",
+  "file": "d7.pdf",
+  "numbered": false,
+  "agency": "BCA",
+  "title": "Periodic Structural Inspection of Existing Buildings: Building Owner's Guide (Sep 2024)",
+  "url": "https://isomer-user-content.by.gov.sg/338/4afd5888-86c9-4c29-863a-598f42888be5/frequently-asked-questions-for-building-owner-(sep-2024).pdf",
+  "sha256": "d73adae28dcfc63916a894eb1d006b25f173aafc30ff50cbe36d12551a50d236"
+ },
+ {
+  "id": "psi_engineer2024",
+  "file": "d8.pdf",
+  "numbered": true,
+  "agency": "BCA",
+  "title": "Periodic Structural Inspection of Existing Buildings: Guidelines for Structural Engineers (Sep 2024)",
+  "url": "https://isomer-user-content.by.gov.sg/338/7fefc1c0-6299-41fa-bf17-17c3a9896f1a/psi-guidelines-for-structural-engineers-(sep-2024).pdf",
+  "sha256": "9b6afab7e2f925063a4d8d428723a7ac0e7c408a8ac3c3a8011c6250e3805bed"
+ },
+ {
+  "id": "gm_maintainability_eb",
+  "file": "d9.pdf",
+  "numbered": false,
+  "agency": "BCA",
+  "title": "Green Mark 2021 Maintainability Section: Existing Buildings Technical Guide v2.1",
+  "url": "https://isomer-user-content.by.gov.sg/338/64b2b95b-0e9d-41ec-acd3-4997a4386285/20240812_mt-section-eb-technical-guide_version-2-1.pdf",
+  "sha256": "d36ae6a88bda8252ddab21399b17074fd66110c96329a757226388f196653b12"
+ },
+ {
+  "id": "gm_energy",
+  "file": "d10.pdf",
+  "numbered": false,
+  "agency": "BCA",
+  "title": "Green Mark 2021 Energy Efficiency Technical Guide R2.1",
+  "url": "https://isomer-user-content.by.gov.sg/338/2da76077-68c5-49b6-8c16-64332df8db2f/20241119_energy-technical-guide_r2-1.pdf",
+  "sha256": "90f9b484de9adffe27a8791d35faff814d3428aece833c07f483c059876ae671"
+ }
+]
