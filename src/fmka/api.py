@@ -1,4 +1,4 @@
-"""HTTP API (FastAPI): /health, /search, /ask, /extract, /classify.
+"""HTTP API (FastAPI): /health, /search, /ask, /extract.
 
 Run: uvicorn fmka.api:app --port 8000   (after building the index with python -m fmka.cli build)
 """
@@ -62,7 +62,17 @@ def search_ep(body: SearchIn):
 def ask_ep(body: AskIn):
     ix = index()
     a = ask(ix, body.question, client=llm_client(), docs=body.docs)
-    return {"status": a.status, "answer": a.text if a.status != "extractive" else None,
+    message = None
+    if a.status == "unverified":
+        message = "The generated answer failed validation and has been withheld."
+    elif a.status in ("not_found", "abstained_low_similarity"):
+        message = a.text
+    elif a.status == "extractive":
+        message = "No language model configured; showing source passages."
+    return {"status": a.status, "answer": a.text if a.status == "answered" else None,
+            "message": message,
+            "extracts": [{**_ref(ix, c), "text": ix.row(c)["text"]} for c in a.passages]
+                        if a.status == "extractive" else [],
             "citations": [_ref(ix, c) for c in a.citations], "sources_considered": [_ref(ix, c) for c in a.passages],
             "problems": a.problems}
 

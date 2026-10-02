@@ -10,6 +10,8 @@ jobs:
           python-version: "3.11"
       - run: pip install -r requirements-ci.txt
       - run: python -m pytest -q tests
+      - name: Check mutation harness failure handling and source restoration
+        run: python tests/mutate.py --self-test
       - name: Mutation check (every deliberate bug must fail the tests)
         run: python tests/mutate.py
   docker:

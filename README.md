@@ -1,13 +1,13 @@
 # FM Knowledge Assistant
 
-Cited search and question answering over Singapore building and facilities-management codes. The system retrieves clauses, answers only from them, and withholds any answer it cannot check against the text. It also extracts quantitative requirements and routes passages to their topic.
+Cited search and question answering over Singapore building and facilities-management codes. The system retrieves clauses and checks generated drafts for valid citations and numeric membership in the cited text. These checks do not establish that a claim is true or applies to the right subject. It also extracts quantitative requirements and evaluates passage classification.
 
-- **Retrieval:** hybrid. BM25 keyword search is combined with dense vectors (bge-small) through reciprocal-rank fusion. The vectors are held in DuckDB with an HNSW index (the `vss` extension).
+- **Retrieval:** hybrid. BM25 keyword search is combined with dense vectors (bge-small) through reciprocal-rank fusion. The vectors are held in DuckDB with an HNSW index (the `vss` extension). Document restrictions apply before each candidate limit, so an allowed passage is not lost behind more highly ranked documents outside the filter. Omitted or empty `docs` means all documents; a nonempty filter with no matching documents returns no hits.
 - **Grounded answers:** a draft is shown only if all of these hold:
   - it cites the supplied passages;
-  - every number in it appears in a cited passage;
+  - recognized numeric values in it appear in a cited passage, and no unsupported numeric expressions are detected;
   - the question is close enough to the corpus.
-  Otherwise the assistant says the codes do not cover the question.
+  Low similarity or `NOT_FOUND` yields an abstention. A draft that fails validation is withheld with `unverified` status, which means the draft failed the checks, not that the corpus lacks the answer. CLI/API do not publish that draft; the Python `Answer.text` retains it for internal evaluation.
 - **Document intelligence:**
   - extracts requirements such as "not less than 850 mm" as (comparator, value, unit, subject);
   - classifies passages into their code and chapter.
@@ -36,9 +36,9 @@ Parsing cuts numbered documents at clause numbers (for example "2.3.9", "CLAUSE 
 - A new chapter must start at N.1, so a table value such as "12.5" inside chapter 3 is not read as a clause.
 - Running headers and footers are removed.
 
-## Results
+## Evaluation results
 
-All numbers are produced by `eval/run_eval.py`, `eval/eval_extraction.py` and `fmka.classify`, with outputs in `eval/results/`.
+The retrieval, answering and extraction tables below are archived measurements, produced before the review fixes. They have not been rerun with the new numeric parser. Regression tests establish the corrected behavior, not a new model accuracy claim. The archived outputs in `eval/results/` remain unchanged; corrected classification measurements use a separate file.
 
 ### Retrieval (40 answerable questions)
 
@@ -102,7 +102,7 @@ Recall on the test set is what to expect on new text. The misses are:
 
 ### Passage routing
 
-Stratified 5-fold cross-validation. Clause numbers and cross-references are removed from the text first, because they would give the chapter away.
+Stratified 5-fold cross-validation. **The historical embedding scores below contain label leakage:** the earlier code reused retrieval vectors whose inputs included the document title and clause number. Only the TF-IDF branch received cleaned text. These scores are retained for audit, not as evidence for a fair embedding-versus-TF-IDF comparison.
 
 | Task | Passages | Classes | Majority | TF-IDF + LR | bge-small + LR |
 |---|---|---|---|---|---|
@@ -112,18 +112,40 @@ Stratified 5-fold cross-validation. Clause numbers and cross-references are remo
 
 F1 is macro-F1. The labels come from the documents' own structure, so no hand labelling was involved.
 
+The corrected implementation encodes the same cleaned heading and body for both feature families. It removes clause references and does not prepend document-title or clause metadata. The pretrained sentence encoder is frozen; TF-IDF vocabulary and both classifiers are fitted separately within each training fold. `python -m fmka.classify` writes `eval/results/classification_corrected.json`, preserving `classification.json` as the historical record.
+
+The corrected run on the existing 2,180-chunk local index produced the following results. The index fingerprint, cached model revision and actual package versions are recorded in [the run provenance](eval/results/classification_corrected_provenance.json).
+
+| Task | TF-IDF + LR acc / macro-F1 | Clean-content bge-small + LR acc / macro-F1 |
+|---|---|---|
+| Source document (8 classes) | 0.988 / 0.958 | 0.972 / 0.923 |
+| Fire Code chapter (11 classes) | 0.852 / 0.771 | 0.804 / 0.773 |
+| Accessibility chapter (9 classes) | 0.819 / 0.778 | 0.836 / 0.809 |
+
+TF-IDF results match the archived run. The embedding result no longer supports the earlier claim of uniformly higher accuracy. These are within-corpus, chunk-level folds, not an evaluation on unseen documents; adjacent or similarly worded clauses can still make that task easier.
+
 ## Tests
 
-`tests/test_core.py` has 38 tests:
+The tests cover:
 
 - extraction patterns;
 - BM25, fusion and the tokenizer;
 - every answer check;
 - the clause-numbering rules;
 - an end-to-end run on a generated PDF with a hashing embedder and a scripted LLM, so no model download is needed;
-- the API endpoints.
+- the API endpoints, including withholding failed drafts and providing readable extractive passages;
+- complete English and digit numeric expressions, cited-source boundaries, and unsupported syntax;
+- restricted retrieval with matching documents beyond the global candidate pool;
+- failed and successful index publication, preserving the previous database until the replacement is complete;
+- classification feature inputs and real cross-validation training/validation isolation.
 
-`tests/mutate.py` plants 17 deliberate bugs, and every one must fail at least one test. The first run let two through: BM25's IDF weighting and the chapter-start rule. Both gaps were closed with targeted tests. The script refuses to run if the unmutated code fails its tests or a mutant does not compile, because in either case every mutant would appear "killed".
+`tests/mutate.py` plants deliberate bugs, and every one must fail at least one test. It first checks the full unmodified suite, requires unique and compilable mutations, and only counts actual JUnit test failures as caught defects. Syntax errors, collection/setup errors, process failures and timeouts are not kills. Target files are restored byte-for-byte even on failure. Run `python tests/mutate.py --self-test` to check the harness itself. Mutation runs temporarily edit source: run them exclusively, with no concurrent editor, test, build or application process using the checkout.
+
+## Answer interface and limits
+
+`POST /ask` returns `answer` only for `status="answered"`. Other states return `answer: null` with a `message`. In `extractive` mode, `extracts` contains the readable passage text and its document, clause and page reference. `sources_considered`, `citations` and `problems` remain available for diagnosis. A client should use the status rather than treating any nonempty field as a verified answer.
+
+The shared numeric scanner recognizes decimal and scientific literals, grouped thousands, complete multi-level clause IDs, and English cardinals through millions with digit words after `point`. It normalizes equivalent spellings without authorizing the component words of a compound number. Citation markers are removed; only individually cited passages supply values. Units are not converted or compared, and a number occurring in a header can still authorize the same number in an unrelated claim. Informal spellings, fractions, ordinals and language outside the bounded English grammar are not comprehensively checked. This is a lexical guard, not a semantic proof or an engineering approval.
 
 ## Run it
 
@@ -136,9 +158,10 @@ FMKA_LLM_BASE_URL=http://localhost:11434/v1 FMKA_LLM_MODEL=qwen2.5:3b-16k python
 uvicorn fmka.api:app --port 8000                         # or: docker build -t fmka . && docker run -p 8000:8000 fmka
 python -m pytest -q tests && python tests/mutate.py
 FMKA_LLM_BASE_URL=... python eval/run_eval.py && python eval/eval_extraction.py
+python -m fmka.classify      # corrected classification features; separate result file
 ```
 
-Run the commands from the repository root with `PYTHONPATH=src`. The Docker image fetches and indexes the documents on first start.
+Run the commands from the repository root with `PYTHONPATH=src`. The Docker image fetches and indexes the documents on first start, and stops if either step fails. Rebuilding the index constructs a separate database and replaces the previous one only after all tables and vectors are written and closed. On Windows an open reader may prevent replacement; close readers before rebuilding and restart long-running API processes to use the new index.
 
 ## Limits
 

@@ -194,12 +194,12 @@ def test_ask_not_found(mini_index):
     assert ask(ix, "exit doors", min_sim=0.0, client=FakeLLM("NOT_FOUND")).status == "not_found"
 
 
-def test_api_endpoints(mini_index):
+def test_api_endpoints(mini_index, monkeypatch):
     from fastapi.testclient import TestClient
     from fmka import api
     ix, _ = mini_index
     api.index.cache_clear()
-    api.index = lambda: ix
+    monkeypatch.setattr(api, "index", lambda: ix)
     c = TestClient(api.app)
     assert c.get("/health").json()["status"] == "ok"
     hits = c.post("/search", json={"query": "exit door width", "k": 2}).json()
@@ -249,3 +249,21 @@ def test_retry_when_the_model_forgets_to_cite(mini_index):
     ix, _ = mini_index
     a = ask(ix, "clear width of exit doors", min_sim=0.0, client=ScriptedLLM(["Not less than 850 mm.", "Not less than 850 mm [1]."]))
     assert a.status == "answered"
+
+
+@pytest.mark.parametrize("reply, expected", [
+    ("At least 900 mm [1].", "unverified"),
+    ("At least nine hundred mm [1].", "unverified"),
+    ("Not less than 850 mm [1].", "answered"),
+])
+def test_api_exposes_only_checked_generated_answers(mini_index, monkeypatch, reply, expected):
+    from fastapi.testclient import TestClient
+    from fmka import api
+    ix, _ = mini_index
+    monkeypatch.setattr(api, "index", lambda: ix)
+    monkeypatch.setattr(api, "llm_client", lambda: FakeLLM(reply))
+    monkeypatch.setattr(api, "ask", lambda *args, **kwargs: ask(*args, min_sim=0.0, **kwargs))
+    body = TestClient(api.app).post("/ask", json={"question": "clear width of exit doors"}).json()
+    assert body["status"] == expected
+    assert body["answer"] == (reply if expected == "answered" else None)
+    assert body["sources_considered"][0]["clause"] == "2.2"

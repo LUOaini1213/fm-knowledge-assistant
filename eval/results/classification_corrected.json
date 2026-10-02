@@ -1,0 +1,59 @@
+{
+  "features": {
+    "text": "cleaned heading and body",
+    "encoder": "BAAI/bge-small-en-v1.5",
+    "retrieval_vectors_reused": false,
+    "folds": 5,
+    "seed": 0
+  },
+  "results": {
+    "source_document": {
+      "n": 2180,
+      "classes": 8,
+      "tfidf_logreg": {
+        "accuracy": 0.9880733944954129,
+        "macro_f1": 0.9583399128201054
+      },
+      "embedding_logreg": {
+        "accuracy": 0.9724770642201835,
+        "macro_f1": 0.9232148523171071
+      },
+      "majority": {
+        "accuracy": 0.6376146788990825,
+        "macro_f1": 0.09733893557422969
+      }
+    },
+    "firecode_chapter": {
+      "n": 1390,
+      "classes": 11,
+      "tfidf_logreg": {
+        "accuracy": 0.8517985611510791,
+        "macro_f1": 0.7707891360004797
+      },
+      "embedding_logreg": {
+        "accuracy": 0.8043165467625899,
+        "macro_f1": 0.7734546251306175
+      },
+      "majority": {
+        "accuracy": 0.18705035971223022,
+        "macro_f1": 0.028650137741046834
+      }
+    },
+    "accessibility_chapter": {
+      "n": 371,
+      "classes": 9,
+      "tfidf_logreg": {
+        "accuracy": 0.8194070080862533,
+        "macro_f1": 0.7775470857407214
+      },
+      "embedding_logreg": {
+        "accuracy": 0.8355795148247979,
+        "macro_f1": 0.8085093258158662
+      },
+      "majority": {
+        "accuracy": 0.30727762803234504,
+        "macro_f1": 0.052233676975945026
+      }
+    }
+  }
+}

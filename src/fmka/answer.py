@@ -15,6 +15,7 @@ import os
 import re
 from dataclasses import dataclass, field
 
+from .numeric import numbers, scan_numbers
 from .search import search
 
 SYSTEM = (
@@ -26,10 +27,7 @@ MIN_SIM = 0.725  # chosen on the development questions (eval/run_eval.py)
 JUDGE = ("You check citations. Given a PASSAGE and a CLAIM, answer YES only if the passage itself states the claim about "
          "the same subject (the same equipment, space or element). A number that the passage gives for a different "
          "subject does not count. Answer YES or NO.")
-NUMBER = re.compile(r"(?<![\w.])(\d+(?:[.,]\d+)?)(?![\w.]*\d)")
 CITE = re.compile(r"\[(\d+)\]")
-NUM_WORDS = {"one": "1", "two": "2", "three": "3", "four": "4", "five": "5", "six": "6", "seven": "7", "eight": "8",
-             "nine": "9", "ten": "10"}
 
 
 @dataclass
@@ -43,10 +41,6 @@ class Answer:
     problems: list = field(default_factory=list)
 
 
-def numbers(text):
-    return {n.replace(",", "") for n in NUMBER.findall(text)}
-
-
 def verify(draft, passages):
     """passages: list of passage texts in the order they were numbered (1-based). Returns (cited indices, problems)."""
     cited = sorted({int(c) for c in CITE.findall(draft)})
@@ -57,10 +51,14 @@ def verify(draft, passages):
     if bad:
         problems.append(f"citation to a passage that was not supplied: {bad}")
     good = [c for c in cited if 1 <= c <= len(passages)]
-    source = " ".join(passages[c - 1] for c in good)
-    source_nums = numbers(source) | {NUM_WORDS[w] for w in re.findall(r"\b(" + "|".join(NUM_WORDS) + r")\b", source.lower())}
+    # Normalize each passage separately: words on opposite sides of a passage
+    # boundary must not accidentally form a compound quantity.
+    source_nums = set().union(*(numbers(passages[c - 1]) for c in good))
     body = CITE.sub(" ", draft)
-    missing = sorted(n for n in numbers(body) if n not in source_nums)
+    draft_nums, unsupported = scan_numbers(body)
+    if unsupported:
+        problems.append(f"unsupported numeric expressions: {unsupported}")
+    missing = sorted(n for n in draft_nums if n not in source_nums)
     if missing:
         problems.append(f"numbers not found in the cited passages: {missing}")
     return good, problems

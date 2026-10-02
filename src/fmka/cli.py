@@ -53,7 +53,8 @@ def main(argv=None):
         from .index import Index
         ix = Index()
         a = ask(ix, " ".join(argv[1:]), client=llm_client())
-        print(a.status, "\n", a.text)
+        text = "The generated answer failed validation and has been withheld." if a.status == "unverified" else a.text
+        print(a.status, "\n", text)
         for c in a.citations:
             r = ix.row(c)
             print(f"  [{r['doc_id']} clause {r['clause'] or '-'} p.{r['page']}]")

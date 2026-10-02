@@ -5,13 +5,17 @@ MODES = ("bm25", "dense", "hybrid")
 
 
 def search(index, query, k=5, mode="hybrid", docs=None, pool=50):
-    """Return [(chunk_id, score, dense_sim)]. dense_sim (cosine to the query) is kept for the abstention rule."""
+    """Return [(chunk_id, score, dense_sim)], retaining cosine for the abstention rule.
+
+    docs=None and docs=[] both mean no restriction. A nonempty filter with no
+    matching chunks returns immediately, before embedding or selecting candidates.
+    """
     allowed = None if not docs else set(index.chunks.index[index.chunks.doc_id.isin(docs)])
-    keep = (lambda i: True) if allowed is None else (lambda i: i in allowed)
+    if allowed is not None and not allowed:
+        return []
     qv = index.embed_query(query) if mode in ("dense", "hybrid") else None
-    lex = [(i, s) for i, s in index.bm25.top(query, pool) if keep(i)] if mode in ("bm25", "hybrid") else []
-    den = [(i, s) for i, s in index.store.top(qv, pool if allowed is None else 4 * pool) if keep(i)] \
-        if mode in ("dense", "hybrid") else []
+    lex = index.bm25.top(query, pool, allowed_ids=allowed) if mode in ("bm25", "hybrid") else []
+    den = index.store.top(qv, pool, allowed_ids=allowed) if mode in ("dense", "hybrid") else []
     ranked = {"bm25": lex, "dense": den, "hybrid": rrf([lex, den], n=pool)}[mode][:k]
     if qv is None:
         return [(i, s, None) for i, s in ranked]
