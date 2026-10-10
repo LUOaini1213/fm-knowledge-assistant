@@ -25,7 +25,7 @@ MUTANTS = [
     ('src/fmka/answer.py', 'if top_sim is None or top_sim < min_sim:', 'if top_sim is None:'),
     ('src/fmka/answer.py', 'status = "answered" if not problems else "unverified"', 'status = "answered"'),
     ('src/fmka/answer.py', 'if not draft.upper().startswith("NOT_FOUND") and not CITE.search(draft):', 'if False:'),
-    ('src/fmka/answer.py', 'if strict and not problems and not any(', 'if False and not any('),
+    ('src/fmka/answer.py', 'if strict and not problems:', 'if False:'),
     ('src/fmka/extract.py', '("min", re.compile(MIN_WORDS + r"\\s*" + QTY, re.I)),', '("max", re.compile(MIN_WORDS + r"\\s*" + QTY, re.I)),'),
     ('src/fmka/extract.py', '("max", re.compile(r"\\bno\\b[^.;]{0,40}?\\bmore than\\s+" + QTY, re.I)),', ''),
     ('src/fmka/extract.py', 'out.append(Requirement("range", _num(lo), _unit(u2 or u1), subj, sentence, _num(hi)))', 'out.append(Requirement("range", _num(lo), _unit(u2 or u1), subj, sentence, None))'),
@@ -60,6 +60,18 @@ MUTANTS = [
     ("src/fmka/index.py", "staged = Path(tmp) / db.name",
      "staged = Path(tmp) / db.name; db.unlink(missing_ok=True)"),
     ("src/fmka/index.py", "os.replace(staged, db)", "if not db.exists(): os.replace(staged, db)"),
+    # Quantity claims bind local citations, units, exact bounds and explicit subjects.
+    ("src/fmka/answer.py", "problems.extend(verify_claims(draft, passages))", "pass"),
+    ("src/fmka/claims.py", "ALIASES[unit[1].lower()]", '"any-unit"'),
+    ("src/fmka/claims.py", 'comparator = operator.lastgroup if operator else "eq"', 'comparator = "eq"'),
+    ("src/fmka/claims.py", "return (subject, tuple(quantities)), None", 'return (("any-subject",), tuple(quantities)), None'),
+    ("src/fmka/claims.py", "for c in refs for piece in _clauses", "for c in range(1, len(passages) + 1) for piece in _clauses"),
+    ("src/fmka/claims.py", "local_numbers = set().union(*(scan_numbers(passages[c - 1])[0] for c in refs))",
+     "local_numbers = set().union(*(scan_numbers(p)[0] for p in passages))"),
+    ("src/fmka/claims.py", "if not subject:", "if False:"),
+    ("src/fmka/answer.py", "for n, claim in enumerate(claims(draft), 1):", "for n, claim in enumerate(claims(draft)[:1], 1):"),
+    ("src/fmka/answer.py", 'return reply.upper() == "YES"', 'return reply.upper().startswith("YES")'),
+    ("src/fmka/claims.py", "if any(c.isalpha() and not c.isascii() for c in text):", "if False:"),
 ]
 
 class HarnessError(RuntimeError):

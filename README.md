@@ -1,11 +1,12 @@
 # FM Knowledge Assistant
 
-Cited search and question answering over Singapore building and facilities-management codes. The system retrieves clauses and checks generated drafts for valid citations and numeric membership in the cited text. These checks do not establish that a claim is true or applies to the right subject. It also extracts quantitative requirements and evaluates passage classification.
+Cited search and question answering over Singapore building and facilities-management codes. The system retrieves clauses and checks recognized generated quantities against locally cited source statements: value, unit, comparator and a conservative lexical subject signature. Detected unsupported or ambiguous quantity statements are withheld. These bounded checks do not establish general semantic entailment or applicability. The system also extracts quantitative requirements and evaluates passage classification.
 
 - **Retrieval:** hybrid. BM25 keyword search is combined with dense vectors (bge-small) through reciprocal-rank fusion. The vectors are held in DuckDB with an HNSW index (the `vss` extension). Document restrictions apply before each candidate limit, so an allowed passage is not lost behind more highly ranked documents outside the filter. Omitted or empty `docs` means all documents; a nonempty filter with no matching documents returns no hits.
 - **Grounded answers:** a draft is shown only if all of these hold:
   - it cites the supplied passages;
-  - recognized numeric values in it appear in a cited passage, and no unsupported numeric expressions are detected;
+  - recognized numeric values appear in cited passages, with no unsupported numeric expressions;
+  - each supported quantitative statement has local citations and matches the source quantity's value, unit, comparator and lexical subject; an unbound or ambiguous quantity is unverified;
   - the question is close enough to the corpus.
   Low similarity or `NOT_FOUND` yields an abstention. A draft that fails validation is withheld with `unverified` status, which means the draft failed the checks, not that the corpus lacks the answer. CLI/API do not publish that draft; the Python `Answer.text` retains it for internal evaluation.
 - **Document intelligence:**
@@ -38,7 +39,7 @@ Parsing cuts numbered documents at clause numbers (for example "2.3.9", "CLAUSE 
 
 ## Evaluation results
 
-The retrieval, answering and extraction tables below are archived measurements, produced before the review fixes. They have not been rerun with the new numeric parser. Regression tests establish the corrected behavior, not a new model accuracy claim. The archived outputs in `eval/results/` remain unchanged; corrected classification measurements use a separate file.
+The retrieval, answering and extraction tables below are archived measurements, produced before the review fixes. They have not been rerun with the numeric parser or quantity-binding guard. Regression tests establish the corrected behavior, not a new model accuracy claim. The archived outputs in `eval/results/` remain unchanged; corrected classification and the synthetic checker comparison use separate files.
 
 ### Retrieval (40 answerable questions)
 
@@ -76,12 +77,25 @@ Notes on the runs:
   - q38 is incomplete: it gives the ±5% tolerance but not the 80% condition.
   - q33 describes the evaluation framework without the literal "KPI" that the metric looks for.
 
-**A known failure the checks miss.** Asked "How often must cooling towers be cleaned?" at a looser threshold (0.70), the model answered "every 12 months" and cited NEA clause 3.4. That clause gives 12 months for kitchen exhaust ducts, not for cooling towers. The number check passes because "12" is in the cited passage. At the default threshold of 0.725 the question is refused, because its best match scores 0.712.
+**An archived failure of numeric membership.** Asked "How often must cooling towers be cleaned?" at a looser threshold (0.70), the model answered "every 12 months" and cited NEA clause 3.4. That clause gives 12 months for kitchen exhaust ducts, not for cooling towers. The old number check passed because "12" was in the cited passage. At the default threshold of 0.725 the question was refused, because its best match scored 0.712. This generated-answer experiment has not been rerun; the new guard is tested with synthetic examples of subject transfer and subjectless quantity fragments.
 
 I tried two further checks against this failure:
 
 - **Word overlap between the question and the sentence holding the number** could not separate right from wrong. Some correct answers scored 0.08, while this wrong answer scored 0.25.
-- **A second LLM call that must confirm the claim** is available as `strict=True`. With the 3B model it rejected this case, but it also rejected 7 of 34 correct answers and neither of the two wrong ones, so it is off by default.
+- **A second LLM check** is available as `strict=True`. In the earlier whole-answer experiment, the 3B model rejected this case, but also rejected 7 of 34 correct answers and neither of the two wrong ones, so it remains off by default. The current implementation checks locally cited claims separately and requires every claim to be covered. Its model accuracy has not been measured again.
+
+### Offline quantity-binding challenge cases
+
+[The authored suite](eval/claim_guard_cases.jsonl) contains 25 incorrect bindings, 18 correct examples and two unscored policy boundaries. It covers unit and object transfers, changed comparisons, local citation swaps, metadata borrowing, multiple quantities, supported number spellings and unsupported forms. Examples were written for checker review, not sampled from the corpus or produced by a model.
+
+`python eval/eval_claim_guard.py` compares the frozen `8b8591f` numeric-membership checker with the current checker. [The report](eval/results/claim_guard.json) records every acceptance/refusal and both source fingerprints. `--check` reproduces the report without writing and fails if any incorrect challenge example is accepted. Correct examples refused by the conservative policy are recorded separately; neither this suite nor its rejection rate is a new LLM quality score.
+
+| Checker | Incorrect examples rejected / 25 | Correct examples accepted / 18 | Correct examples refused / 18 |
+|---|---|---|---|
+| Frozen numeric membership (`8b8591f`) | 0 | 18 | 0 |
+| Current quantity/citation guard | 25 | 18 | 0 |
+
+Both unscored boundaries are conservatively refused: an omitted applicability condition and a logically weaker comparator. Zero refusals in these authored positive examples does not establish a production refusal rate; unfamiliar but valid paraphrases can still be withheld.
 
 ### Requirement extraction
 
@@ -135,6 +149,7 @@ The tests cover:
 - an end-to-end run on a generated PDF with a hashing embedder and a scripted LLM, so no model download is needed;
 - the API endpoints, including withholding failed drafts and providing readable extractive passages;
 - complete English and digit numeric expressions, cited-source boundaries, and unsupported syntax;
+- local quantity/citation binding, unit aliases, exact comparisons, subject mismatches, withheld subjectless answers, and per-claim optional judging;
 - restricted retrieval with matching documents beyond the global candidate pool;
 - failed and successful index publication, preserving the previous database until the replacement is complete;
 - classification feature inputs and real cross-validation training/validation isolation.
@@ -145,7 +160,9 @@ The tests cover:
 
 `POST /ask` returns `answer` only for `status="answered"`. Other states return `answer: null` with a `message`. In `extractive` mode, `extracts` contains the readable passage text and its document, clause and page reference. `sources_considered`, `citations` and `problems` remain available for diagnosis. A client should use the status rather than treating any nonempty field as a verified answer.
 
-The shared numeric scanner recognizes decimal and scientific literals, grouped thousands, complete multi-level clause IDs, and English cardinals through millions with digit words after `point`. It normalizes equivalent spellings without authorizing the component words of a compound number. Citation markers are removed; only individually cited passages supply values. Units are not converted or compared, and a number occurring in a header can still authorize the same number in an unrelated claim. Informal spellings, fractions, ordinals and language outside the bounded English grammar are not comprehensively checked. This is a lexical guard, not a semantic proof or an engineering approval.
+The shared numeric scanner recognizes decimal and scientific literals, grouped thousands, complete multi-level clause IDs, and English cardinals through millions with digit words after `point`. It normalizes equivalent spellings without authorizing component words of a compound number. The additional guard binds supported quantities to local citations, canonical unit aliases, exact comparators and ordered lexical subjects/predicates. It does not convert units, infer arbitrary synonyms, resolve pronouns or reconstruct an omitted subject from the question. Reference-only metadata numbers are checked against their local citations; a page number or year cannot supply a physical quantity. Detected unsupported quantitative grammar is withheld, and no-client extractive mode still returns readable original passages. Arbitrary languages, unrecognized number spellings and general factual assertions remain outside this bounded parser.
+
+Matching a quantity tuple does not prove that a source's conditions, exceptions or broader context apply to the question. Non-quantitative factual entailment is outside the deterministic guard. Exact comparator matching can conservatively refuse a logically weaker paraphrase. The two explicit challenge boundaries make these limits visible; optional model judging also provides no proof of correctness.
 
 ## Run it
 
@@ -157,6 +174,7 @@ python -m fmka.cli search "minimum clear width of an exit door"
 FMKA_LLM_BASE_URL=http://localhost:11434/v1 FMKA_LLM_MODEL=qwen2.5:3b-16k python -m fmka.cli ask "What is the minimum clear width of an exit door?"
 uvicorn fmka.api:app --port 8000                         # or: docker build -t fmka . && docker run -p 8000:8000 fmka
 python -m pytest -q tests && python tests/mutate.py
+python eval/eval_claim_guard.py --check  # offline synthetic checker comparison; no model or corpus
 FMKA_LLM_BASE_URL=... python eval/run_eval.py && python eval/eval_extraction.py
 python -m fmka.classify      # corrected classification features; separate result file
 ```

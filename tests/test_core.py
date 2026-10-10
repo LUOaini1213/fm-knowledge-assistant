@@ -173,7 +173,7 @@ class FakeLLM:
 
 def test_ask_answers_with_verified_citation(mini_index):
     ix, _ = mini_index
-    a = ask(ix, "clear width of exit doors", min_sim=0.0, client=FakeLLM("Not less than 850 mm [1]."))
+    a = ask(ix, "clear width of exit doors", min_sim=0.0, client=FakeLLM("Exit doors need at least 850 mm clear width [1]."))
     assert a.status == "answered" and ix.row(a.citations[0])["clause"] == "2.2"
 
 
@@ -239,22 +239,22 @@ class ScriptedLLM(FakeLLM):
 
 def test_strict_mode_withholds_when_the_judge_disagrees(mini_index):
     ix, _ = mini_index
-    a = ask(ix, "clear width of exit doors", min_sim=0.0, client=ScriptedLLM(["Not less than 850 mm [1].", "NO"]), strict=True)
+    a = ask(ix, "clear width of exit doors", min_sim=0.0, client=ScriptedLLM(["Exit doors need at least 850 mm clear width [1].", "NO"]), strict=True)
     assert a.status == "unverified"
-    b = ask(ix, "clear width of exit doors", min_sim=0.0, client=ScriptedLLM(["Not less than 850 mm [1].", "YES"]), strict=True)
+    b = ask(ix, "clear width of exit doors", min_sim=0.0, client=ScriptedLLM(["Exit doors need at least 850 mm clear width [1].", "YES"]), strict=True)
     assert b.status == "answered"
 
 
 def test_retry_when_the_model_forgets_to_cite(mini_index):
     ix, _ = mini_index
-    a = ask(ix, "clear width of exit doors", min_sim=0.0, client=ScriptedLLM(["Not less than 850 mm.", "Not less than 850 mm [1]."]))
+    a = ask(ix, "clear width of exit doors", min_sim=0.0, client=ScriptedLLM(["Exit doors need at least 850 mm clear width.", "Exit doors need at least 850 mm clear width [1]."]))
     assert a.status == "answered"
 
 
 @pytest.mark.parametrize("reply, expected", [
     ("At least 900 mm [1].", "unverified"),
     ("At least nine hundred mm [1].", "unverified"),
-    ("Not less than 850 mm [1].", "answered"),
+    ("Exit doors need at least 850 mm clear width [1].", "answered"),
 ])
 def test_api_exposes_only_checked_generated_answers(mini_index, monkeypatch, reply, expected):
     from fastapi.testclient import TestClient

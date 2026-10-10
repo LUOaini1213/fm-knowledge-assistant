@@ -1,0 +1,944 @@
+{
+  "baseline": {
+    "outcomes": [
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "unit-transfer",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "subject-transfer",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "property-transfer",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "same-sentence-objects",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "comparison-reversed",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "strict-bound-strengthened",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "symbol-bound-strengthened",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "symbol-bound-reversed",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "reject",
+        "id": "swapped-local-citations",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "reject",
+        "id": "earlier-uncited-sentence",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "metadata-page-borrow",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "metadata-year-borrow",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "area-dimension-transfer",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "time-length-ambiguity",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "chinese-word-quantity",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "chinese-digit-quantity",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "unsupported-dozen",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "detached-property-borrow",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "matching-single",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "accept",
+        "id": "matching-local-two-sentences",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "accept",
+        "id": "same-sentence-two-citations",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "same-sentence-two-objects",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "english-number-normalization",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "unicode-area-alias",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "symbol-nonstrict-alias",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "metadata-reference",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "matching-interval",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "matching-shared-subject",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "negative-temperature",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "boundary",
+        "id": "conditional-scope-limit",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "boundary",
+        "id": "weakening-scope-limit",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "bare-quantity-wrong-object",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "different-maintenance-action",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "quantity-negation-dropped",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "qualified-subject-generalized",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "value-and-unit-from-different-facts",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "swapped-same-unit-subject-values",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "accept",
+        "id": "separate-semicolon-citations",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "scientific-literal-normalization",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "unit-alias-liter",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "matching-specific-subject",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "conditional-source-quote",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "reject",
+        "id": "local-cites-within-sentence",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "accept",
+        "id": "decimal-sentence-boundary",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "accept",
+        "id": "citation-after-period",
+        "problems": []
+      }
+    ],
+    "summary": {
+      "correct_accepted": 18,
+      "correct_examples": 18,
+      "correct_refused": 0,
+      "incorrect_accepted": 25,
+      "incorrect_examples": 25,
+      "incorrect_rejected": 0,
+      "unscored_boundaries": 2
+    }
+  },
+  "baseline_commit": "8b8591fcb3bf9382f01ff49299de2de574a080f5",
+  "baseline_source_sha256": {
+    "src/fmka/answer.py": "99d86df8c0cebe884c24031d59c451b67efba0faa9457abfe3a4262dbd7ee342",
+    "src/fmka/numeric.py": "b7c9dd655ec632f34c4f7c56e0c4e7d957120f21aa579ba550c8596f85da2440"
+  },
+  "case_count": 45,
+  "current": {
+    "outcomes": [
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "unit-transfer",
+        "problems": [
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "subject-transfer",
+        "problems": [
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "property-transfer",
+        "problems": [
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "same-sentence-objects",
+        "problems": [
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "comparison-reversed",
+        "problems": [
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "strict-bound-strengthened",
+        "problems": [
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "symbol-bound-strengthened",
+        "problems": [
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "symbol-bound-reversed",
+        "problems": [
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "reject",
+        "id": "swapped-local-citations",
+        "problems": [
+          "claim 1: numbers absent from its local citations: ['850']",
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations",
+          "claim 2: numbers absent from its local citations: ['60']",
+          "claim 2: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "reject",
+        "id": "earlier-uncited-sentence",
+        "problems": [
+          "claim 1: no valid local citation"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "metadata-page-borrow",
+        "problems": [
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "metadata-year-borrow",
+        "problems": [
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "area-dimension-transfer",
+        "problems": [
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "time-length-ambiguity",
+        "problems": [
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "chinese-word-quantity",
+        "problems": [
+          "claim 1: unsupported claim language/subject spelling",
+          "claim 2: no valid local citation"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "chinese-digit-quantity",
+        "problems": [
+          "claim 1: unsupported claim language/subject spelling",
+          "claim 2: no valid local citation"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "unsupported-dozen",
+        "problems": [
+          "claim 1: unsupported expression"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "detached-property-borrow",
+        "problems": [
+          "claim 1: unsupported multi-quantity binding"
+        ]
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "matching-single",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "accept",
+        "id": "matching-local-two-sentences",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "accept",
+        "id": "same-sentence-two-citations",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "same-sentence-two-objects",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "english-number-normalization",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "unicode-area-alias",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "symbol-nonstrict-alias",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "metadata-reference",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "matching-interval",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "matching-shared-subject",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "negative-temperature",
+        "problems": []
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "boundary",
+        "id": "conditional-scope-limit",
+        "problems": [
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "boundary",
+        "id": "weakening-scope-limit",
+        "problems": [
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "bare-quantity-wrong-object",
+        "problems": [
+          "claim 1: missing explicit subject"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "different-maintenance-action",
+        "problems": [
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "quantity-negation-dropped",
+        "problems": [
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "qualified-subject-generalized",
+        "problems": [
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "value-and-unit-from-different-facts",
+        "problems": [
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "swapped-same-unit-subject-values",
+        "problems": [
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations",
+          "claim 2: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "accept",
+        "id": "separate-semicolon-citations",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "scientific-literal-normalization",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "unit-alias-liter",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "matching-specific-subject",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "conditional-source-quote",
+        "problems": []
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "reject",
+        "id": "local-cites-within-sentence",
+        "problems": [
+          "claim 1: numbers absent from its local citations: ['850']",
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations",
+          "claim 2: numbers absent from its local citations: ['900']",
+          "claim 2: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "accept",
+        "id": "decimal-sentence-boundary",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "accept",
+        "id": "citation-after-period",
+        "problems": []
+      }
+    ],
+    "summary": {
+      "correct_accepted": 18,
+      "correct_examples": 18,
+      "correct_refused": 0,
+      "incorrect_accepted": 0,
+      "incorrect_examples": 25,
+      "incorrect_rejected": 25,
+      "unscored_boundaries": 2
+    }
+  },
+  "current_source_sha256": {
+    "src/fmka/__init__.py": "91447944015cec709e8aa7655f7e9d64e1e4508e7023a57fe3746911c0fc6fed",
+    "src/fmka/answer.py": "d72b469ef9544bc5405c9ce180a4605439fab8bb87489725f05f43ac142aa221",
+    "src/fmka/api.py": "b9ccb140f8b4143e74d38b3ed3f01738ad7ba6cfb6755f2745d16a47af39353d",
+    "src/fmka/claims.py": "d294a6f41b725706e4bb22021667fce875657a17067cbb3b6d0e2209c91df8f1",
+    "src/fmka/classify.py": "beccc174bf995ba6cdeb9d386edfd1efc3c11c0cf24539376333e9dcac20b3e2",
+    "src/fmka/cli.py": "d9741737d165bec4aa5b3c96ad0c75a83c01d9c8ab7015db98b3c9001d3ab5b7",
+    "src/fmka/extract.py": "9142a10627d262f5f066abc3151fe595281058594e38b1ed376d244eb02c2b29",
+    "src/fmka/index.py": "f653013a3c8285bbbfe49a4475da4629707cf385c814664cb5d8f9e57bc37e71",
+    "src/fmka/numeric.py": "b7c9dd655ec632f34c4f7c56e0c4e7d957120f21aa579ba550c8596f85da2440",
+    "src/fmka/parse.py": "fcdf2626dfe0cdd6dab2e0a144e4521505585964250ce9b644296803b33ae01f",
+    "src/fmka/retrieval.py": "b858c51ed18e8791b51e5f0a71713744ecd58c876349328e7f2fdeccbd978b9b",
+    "src/fmka/search.py": "9d4b6f2412090ad5c5bc78e6670f25558b9aa64269b06eb9f92b0e9c76172ba2"
+  },
+  "evaluator_sha256": "59eb308acb91f6435807bf131f46c544d229eaf910f974fa4d308dbf87532a61",
+  "evidence_kind": "authored_synthetic_checker_regressions",
+  "fingerprint_format": "sha256_utf8_lf",
+  "model_or_corpus_calls": 0,
+  "schema_version": 1,
+  "suite": "eval/claim_guard_cases.jsonl",
+  "suite_sha256": "aec7c0764c0f8b3603bdc482cc89ef7317538f65da66fcb6fd14cc9d8c517ceb"
+}

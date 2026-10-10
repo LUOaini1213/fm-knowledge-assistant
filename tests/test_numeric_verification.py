@@ -92,7 +92,7 @@ def test_unsupported_values_cannot_hide_or_borrow_components(draft, source):
 def test_unrecognised_numeric_expressions_are_reported(expression):
     cited, problems = verify(f"The width is {expression} mm [1].", ["The width is 1, 3, 5, 20 or 25 mm."])
     assert cited == [1]
-    assert problems
+    assert any("unsupported numeric expressions:" in p for p in problems)
 
 
 def test_numeric_check_keeps_citation_scope_and_header_support():
@@ -118,6 +118,10 @@ def test_attached_unit_does_not_expose_a_component_of_an_unsupported_decimal():
     assert verify("The width is 5 m [1].", ["The width is one point 5m."])[1]
 
 
-def test_check_remains_numeric_membership_not_unit_or_subject_entailment():
-    # The lexical check must not be advertised as checking units or which subject a number describes.
-    assert verify("The width is 12 m [1].", ["Duct cleaning occurs every 12 months."]) == ([1], [])
+def test_quantity_binding_rejects_numeric_membership_without_unit_or_subject_support():
+    assert verify("The width is 12 m [1].", ["Duct cleaning occurs every 12 months."])[1]
+
+
+def test_original_numeric_diagnostics_remain_independent_of_quantity_binding():
+    _, problems = verify("The limit is 60 m [1].", ["Door width is 850 mm.", "Travel distance is 60 m."])
+    assert "numbers not found in the cited passages: ['60']" in problems

@@ -4,8 +4,10 @@
 2. Abstain before generation when even the best passage is not close to the question (dense cosine below a
    threshold chosen on the development questions only).
 3. Ask the LLM to answer only from the numbered passages and cite them as [n], or reply NOT_FOUND.
-4. Check the draft: every citation must point to a supplied passage, and every number in the answer must appear in
-   a cited passage. A draft that fails either check is withheld and reported as unverified, not shown as an answer.
+4. Check supplied citations and numeric membership, then bind each generated quantity statement to its local
+   citations using a bounded value/unit/comparator/explicit subject grammar. Unsupported or ambiguous detected
+   quantities fail closed. This lexical guard does not prove arbitrary semantic entailment or non-quantity facts.
+   A failed draft is retained for internal diagnostics and withheld from public answers as unverified.
 
 The LLM is any OpenAI-compatible chat endpoint set by FMKA_LLM_BASE_URL / FMKA_LLM_MODEL / FMKA_LLM_KEY: a local
 Ollama model (the default used in the evaluation, qwen2.5:3b), DeepSeek, or Azure OpenAI through the same client.
@@ -16,6 +18,7 @@ import re
 from dataclasses import dataclass, field
 
 from .numeric import numbers, scan_numbers
+from .claims import claims, verify_claims
 from .search import search
 
 SYSTEM = (
@@ -61,6 +64,7 @@ def verify(draft, passages):
     missing = sorted(n for n in draft_nums if n not in source_nums)
     if missing:
         problems.append(f"numbers not found in the cited passages: {missing}")
+    problems.extend(verify_claims(draft, passages))
     return good, problems
 
 
@@ -84,13 +88,15 @@ def _chat(client, model, messages):
 def judged(client, model, passage, claim):
     reply = _chat(client, model, [{"role": "system", "content": JUDGE},
                                   {"role": "user", "content": f"PASSAGE: {passage}\n\nCLAIM: {claim}"}])
-    return reply.upper().startswith("YES")
+    return reply.upper() == "YES"
 
 
 def ask(index, question, k=6, min_sim=MIN_SIM, client=None, model=None, docs=None, strict=False):
-    """strict=True adds a second LLM call that must confirm a cited passage states the claim for the same subject.
-    Measured with qwen2.5:3b it rejected a transferred number (see README) but also 7 of 34 correct answers, so it is
-    off by default."""
+    """strict=True additionally judges every statement against its own citations.
+
+    This optional model judgment cannot override the deterministic quantity guard;
+    its historical whole-answer evaluation does not measure this per-claim policy.
+    """
     hits = search(index, question, k=k, mode="hybrid", docs=docs)
     ids = [h[0] for h in hits]
     top_sim = max((h[2] for h in hits if h[2] is not None), default=None)
@@ -98,8 +104,9 @@ def ask(index, question, k=6, min_sim=MIN_SIM, client=None, model=None, docs=Non
         return Answer(question, "abstained_low_similarity", "The indexed codes do not appear to cover this question.",
                       passages=ids, top_sim=top_sim)
     rows = [index.row(i) for i in ids]
-    # The passage header (document title, clause, page) is part of what the model sees, so numbers taken from it
-    # (a page number, the code's year) count as sourced.
+    # The model sees metadata as well as the passage. Header values can support
+    # reference-only statements; the quantity guard strips this header so a page
+    # number or code year cannot authorize a physical measurement.
     texts = [f"({index.titles.get(r['doc_id'], r['doc_id'])}, clause {r['clause'] or '-'}, page {r['page']}) "
              f"{r['heading']} {r['text']}".strip() for r in rows]
     numbered = "\n\n".join(f"[{n}] {t}" for n, t in enumerate(texts, start=1))
@@ -117,8 +124,10 @@ def ask(index, question, k=6, min_sim=MIN_SIM, client=None, model=None, docs=Non
         return Answer(question, "not_found", "The indexed codes do not appear to cover this question.",
                       passages=ids, top_sim=top_sim)
     cited, problems = verify(draft, texts)
-    if strict and not problems and not any(judged(client, model, texts[c - 1], CITE.sub("", draft).strip()) for c in cited):
-        problems.append("no cited passage states the claim for the same subject")
+    if strict and not problems:
+        for n, claim in enumerate(claims(draft), 1):
+            if not any(judged(client, model, texts[c - 1], claim.text) for c in claim.citations):
+                problems.append(f"claim {n}: no local cited passage states the claim for the same subject")
     status = "answered" if not problems else "unverified"
     return Answer(question, status, draft, citations=[ids[c - 1] for c in cited], passages=ids, top_sim=top_sim,
                   problems=problems)

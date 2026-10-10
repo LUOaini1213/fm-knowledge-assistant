@@ -22,6 +22,14 @@ def shell_command(command):
         wsl = shutil.which("wsl")
         if wsl is None:
             pytest.skip("POSIX startup test requires WSL on Windows")
+        # Windows may ship a wsl.exe launcher without a usable distribution.
+        # Probe bytes: its failure diagnostics can be UTF-16, not the locale codec.
+        try:
+            available = subprocess.run([wsl, "--exec", "sh", "-c", "exit 0"], capture_output=True, timeout=10)
+        except (OSError, subprocess.TimeoutExpired):
+            pytest.skip("POSIX startup test requires a usable WSL shell on Windows")
+        if available.returncode:
+            pytest.skip("POSIX startup test requires a usable WSL shell on Windows")
         return [wsl, "--exec", "sh", "-c", command]
     shell = shutil.which("sh")
     if shell is None:
