@@ -10,4 +10,4 @@ COPY src ./src
 COPY sources.json ./
 EXPOSE 8000
 HEALTHCHECK CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"
-CMD ["sh", "-c", "[ -f data/processed/fmka.duckdb ] || (python -m fmka.cli fetch && python -m fmka.cli build); uvicorn fmka.api:app --host 0.0.0.0 --port 8000"]
+CMD ["sh", "-c", "if [ ! -f data/processed/fmka.duckdb ]; then python -m fmka.cli fetch || exit $?; python -m fmka.cli build || exit $?; fi; exec uvicorn fmka.api:app --host 0.0.0.0 --port 8000"]

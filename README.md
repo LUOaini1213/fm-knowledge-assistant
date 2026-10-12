@@ -1,13 +1,14 @@
 # FM Knowledge Assistant
 
-Cited search and question answering over Singapore building and facilities-management codes. The system retrieves clauses, answers only from them, and withholds any answer it cannot check against the text. It also extracts quantitative requirements and routes passages to their topic.
+Cited search and question answering over Singapore building and facilities-management codes. The system retrieves clauses and checks recognized generated quantities against locally cited source statements: value, unit, comparator and a conservative lexical subject signature. Detected unsupported or ambiguous quantity statements are withheld. These bounded checks do not establish general semantic entailment or applicability. The system also extracts quantitative requirements and evaluates passage classification.
 
-- **Retrieval:** hybrid. BM25 keyword search is combined with dense vectors (bge-small) through reciprocal-rank fusion. The vectors are held in DuckDB with an HNSW index (the `vss` extension).
+- **Retrieval:** hybrid. BM25 keyword search is combined with dense vectors (bge-small) through reciprocal-rank fusion. The vectors are held in DuckDB with an HNSW index (the `vss` extension). Document restrictions apply before each candidate limit, so an allowed passage is not lost behind more highly ranked documents outside the filter. Omitted or empty `docs` means all documents; a nonempty filter with no matching documents returns no hits.
 - **Grounded answers:** a draft is shown only if all of these hold:
   - it cites the supplied passages;
-  - every number in it appears in a cited passage;
+  - recognized numeric values appear in cited passages, with no unsupported numeric expressions;
+  - each supported quantitative statement has local citations and matches the source quantity's value, unit, comparator and lexical subject; an unbound or ambiguous quantity is unverified;
   - the question is close enough to the corpus.
-  Otherwise the assistant says the codes do not cover the question.
+  Low similarity or `NOT_FOUND` yields an abstention. A draft that fails validation is withheld with `unverified` status, which means the draft failed the checks, not that the corpus lacks the answer. CLI/API do not publish that draft; the Python `Answer.text` retains it for internal evaluation.
 - **Document intelligence:**
   - extracts requirements such as "not less than 850 mm" as (comparator, value, unit, subject);
   - classifies passages into their code and chapter.
@@ -36,9 +37,9 @@ Parsing cuts numbered documents at clause numbers (for example "2.3.9", "CLAUSE 
 - A new chapter must start at N.1, so a table value such as "12.5" inside chapter 3 is not read as a clause.
 - Running headers and footers are removed.
 
-## Results
+## Evaluation results
 
-All numbers are produced by `eval/run_eval.py`, `eval/eval_extraction.py` and `fmka.classify`, with outputs in `eval/results/`.
+The retrieval, answering and extraction tables below are archived measurements, produced before the review fixes. They have not been rerun with the numeric parser or quantity-binding guard. Regression tests establish the corrected behavior, not a new model accuracy claim. The archived outputs in `eval/results/` remain unchanged; corrected classification and the synthetic checker comparison use separate files.
 
 ### Retrieval (40 answerable questions)
 
@@ -76,12 +77,25 @@ Notes on the runs:
   - q38 is incomplete: it gives the ±5% tolerance but not the 80% condition.
   - q33 describes the evaluation framework without the literal "KPI" that the metric looks for.
 
-**A known failure the checks miss.** Asked "How often must cooling towers be cleaned?" at a looser threshold (0.70), the model answered "every 12 months" and cited NEA clause 3.4. That clause gives 12 months for kitchen exhaust ducts, not for cooling towers. The number check passes because "12" is in the cited passage. At the default threshold of 0.725 the question is refused, because its best match scores 0.712.
+**An archived failure of numeric membership.** Asked "How often must cooling towers be cleaned?" at a looser threshold (0.70), the model answered "every 12 months" and cited NEA clause 3.4. That clause gives 12 months for kitchen exhaust ducts, not for cooling towers. The old number check passed because "12" was in the cited passage. At the default threshold of 0.725 the question was refused, because its best match scored 0.712. This generated-answer experiment has not been rerun; the new guard is tested with synthetic examples of subject transfer and subjectless quantity fragments.
 
 I tried two further checks against this failure:
 
 - **Word overlap between the question and the sentence holding the number** could not separate right from wrong. Some correct answers scored 0.08, while this wrong answer scored 0.25.
-- **A second LLM call that must confirm the claim** is available as `strict=True`. With the 3B model it rejected this case, but it also rejected 7 of 34 correct answers and neither of the two wrong ones, so it is off by default.
+- **A second LLM check** is available as `strict=True`. In the earlier whole-answer experiment, the 3B model rejected this case, but also rejected 7 of 34 correct answers and neither of the two wrong ones, so it remains off by default. The current implementation checks locally cited claims separately and requires every claim to be covered. Its model accuracy has not been measured again.
+
+### Offline quantity-binding challenge cases
+
+[The authored suite](eval/claim_guard_cases.jsonl) contains 25 incorrect bindings, 18 correct examples and two unscored policy boundaries. It covers unit and object transfers, changed comparisons, local citation swaps, metadata borrowing, multiple quantities, supported number spellings and unsupported forms. Examples were written for checker review, not sampled from the corpus or produced by a model.
+
+`python eval/eval_claim_guard.py` compares the frozen `8b8591f` numeric-membership checker with the current checker. [The report](eval/results/claim_guard.json) records every acceptance/refusal and both source fingerprints. `--check` reproduces the report without writing and fails if any incorrect challenge example is accepted. Correct examples refused by the conservative policy are recorded separately; neither this suite nor its rejection rate is a new LLM quality score.
+
+| Checker | Incorrect examples rejected / 25 | Correct examples accepted / 18 | Correct examples refused / 18 |
+|---|---|---|---|
+| Frozen numeric membership (`8b8591f`) | 0 | 18 | 0 |
+| Current quantity/citation guard | 25 | 18 | 0 |
+
+Both unscored boundaries are conservatively refused: an omitted applicability condition and a logically weaker comparator. Zero refusals in these authored positive examples does not establish a production refusal rate; unfamiliar but valid paraphrases can still be withheld.
 
 ### Requirement extraction
 
@@ -102,7 +116,7 @@ Recall on the test set is what to expect on new text. The misses are:
 
 ### Passage routing
 
-Stratified 5-fold cross-validation. Clause numbers and cross-references are removed from the text first, because they would give the chapter away.
+Stratified 5-fold cross-validation. **The historical embedding scores below contain label leakage:** the earlier code reused retrieval vectors whose inputs included the document title and clause number. Only the TF-IDF branch received cleaned text. These scores are retained for audit, not as evidence for a fair embedding-versus-TF-IDF comparison.
 
 | Task | Passages | Classes | Majority | TF-IDF + LR | bge-small + LR |
 |---|---|---|---|---|---|
@@ -112,18 +126,43 @@ Stratified 5-fold cross-validation. Clause numbers and cross-references are remo
 
 F1 is macro-F1. The labels come from the documents' own structure, so no hand labelling was involved.
 
+The corrected implementation encodes the same cleaned heading and body for both feature families. It removes clause references and does not prepend document-title or clause metadata. The pretrained sentence encoder is frozen; TF-IDF vocabulary and both classifiers are fitted separately within each training fold. `python -m fmka.classify` writes `eval/results/classification_corrected.json`, preserving `classification.json` as the historical record.
+
+The corrected run on the existing 2,180-chunk local index produced the following results. The index fingerprint, cached model revision and actual package versions are recorded in [the run provenance](eval/results/classification_corrected_provenance.json).
+
+| Task | TF-IDF + LR acc / macro-F1 | Clean-content bge-small + LR acc / macro-F1 |
+|---|---|---|
+| Source document (8 classes) | 0.988 / 0.958 | 0.972 / 0.923 |
+| Fire Code chapter (11 classes) | 0.852 / 0.771 | 0.804 / 0.773 |
+| Accessibility chapter (9 classes) | 0.819 / 0.778 | 0.836 / 0.809 |
+
+TF-IDF results match the archived run. The embedding result no longer supports the earlier claim of uniformly higher accuracy. These are within-corpus, chunk-level folds, not an evaluation on unseen documents; adjacent or similarly worded clauses can still make that task easier.
+
 ## Tests
 
-`tests/test_core.py` has 38 tests:
+The tests cover:
 
 - extraction patterns;
 - BM25, fusion and the tokenizer;
 - every answer check;
 - the clause-numbering rules;
 - an end-to-end run on a generated PDF with a hashing embedder and a scripted LLM, so no model download is needed;
-- the API endpoints.
+- the API endpoints, including withholding failed drafts and providing readable extractive passages;
+- complete English and digit numeric expressions, cited-source boundaries, and unsupported syntax;
+- local quantity/citation binding, unit aliases, exact comparisons, subject mismatches, withheld subjectless answers, and per-claim optional judging;
+- restricted retrieval with matching documents beyond the global candidate pool;
+- failed and successful index publication, preserving the previous database until the replacement is complete;
+- classification feature inputs and real cross-validation training/validation isolation.
 
-`tests/mutate.py` plants 17 deliberate bugs, and every one must fail at least one test. The first run let two through: BM25's IDF weighting and the chapter-start rule. Both gaps were closed with targeted tests. The script refuses to run if the unmutated code fails its tests or a mutant does not compile, because in either case every mutant would appear "killed".
+`tests/mutate.py` plants deliberate bugs, and every one must fail at least one test. It first checks the full unmodified suite, requires unique and compilable mutations, and only counts actual JUnit test failures as caught defects. Syntax errors, collection/setup errors, process failures and timeouts are not kills. Target files are restored byte-for-byte even on failure. Run `python tests/mutate.py --self-test` to check the harness itself. Mutation runs temporarily edit source: run them exclusively, with no concurrent editor, test, build or application process using the checkout.
+
+## Answer interface and limits
+
+`POST /ask` returns `answer` only for `status="answered"`. Other states return `answer: null` with a `message`. In `extractive` mode, `extracts` contains the readable passage text and its document, clause and page reference. `sources_considered`, `citations` and `problems` remain available for diagnosis. A client should use the status rather than treating any nonempty field as a verified answer.
+
+The shared numeric scanner recognizes decimal and scientific literals, grouped thousands, complete multi-level clause IDs, and English cardinals through millions with digit words after `point`. It normalizes equivalent spellings without authorizing component words of a compound number. The additional guard binds supported quantities to local citations, canonical unit aliases, exact comparators and ordered lexical subjects/predicates. It does not convert units, infer arbitrary synonyms, resolve pronouns or reconstruct an omitted subject from the question. Reference-only metadata numbers are checked against their local citations; a page number or year cannot supply a physical quantity. Detected unsupported quantitative grammar is withheld, and no-client extractive mode still returns readable original passages. Arbitrary languages, unrecognized number spellings and general factual assertions remain outside this bounded parser.
+
+Matching a quantity tuple does not prove that a source's conditions, exceptions or broader context apply to the question. Non-quantitative factual entailment is outside the deterministic guard. Exact comparator matching can conservatively refuse a logically weaker paraphrase. The two explicit challenge boundaries make these limits visible; optional model judging also provides no proof of correctness.
 
 ## Run it
 
@@ -135,10 +174,12 @@ python -m fmka.cli search "minimum clear width of an exit door"
 FMKA_LLM_BASE_URL=http://localhost:11434/v1 FMKA_LLM_MODEL=qwen2.5:3b-16k python -m fmka.cli ask "What is the minimum clear width of an exit door?"
 uvicorn fmka.api:app --port 8000                         # or: docker build -t fmka . && docker run -p 8000:8000 fmka
 python -m pytest -q tests && python tests/mutate.py
+python eval/eval_claim_guard.py --check  # offline synthetic checker comparison; no model or corpus
 FMKA_LLM_BASE_URL=... python eval/run_eval.py && python eval/eval_extraction.py
+python -m fmka.classify      # corrected classification features; separate result file
 ```
 
-Run the commands from the repository root with `PYTHONPATH=src`. The Docker image fetches and indexes the documents on first start.
+Run the commands from the repository root with `PYTHONPATH=src`. The Docker image fetches and indexes the documents on first start, and stops if either step fails. Rebuilding the index constructs a separate database and replaces the previous one only after all tables and vectors are written and closed. On Windows an open reader may prevent replacement; close readers before rebuilding and restart long-running API processes to use the new index.
 
 ## Limits
 

@@ -6,7 +6,8 @@ own structure, so no hand labelling is involved. Clause numbers and cross-refere
 removed from the text first, because they would give the chapter away.
 
 Two models are compared with stratified 5-fold cross-validation: TF-IDF + logistic regression, and logistic
-regression on the bge-small sentence embeddings already stored in the index.
+regression on frozen bge-small sentence embeddings of the same cleaned content. Retrieval vectors are not used:
+their document titles and clause numbers expose the labels being predicted.
 """
 import re
 
@@ -57,9 +58,10 @@ def tasks(chunks):
 
 def run(index):
     ch = index.chunks
-    vec = dict(index.con.execute("select chunk_id, v from vectors").fetchall())
-    V = np.array([vec[i] for i in ch.chunk_id])
     texts = [clean(f"{h} {t}") for h, t in zip(ch.heading, ch.text)]
+    # Re-encode content rather than reusing retrieval features containing source/chapter metadata.
+    # The pretrained encoder is frozen; fitted TF-IDF and classifiers remain inside each training fold.
+    V = np.asarray(index.model.encode(texts, batch_size=64, normalize_embeddings=True, show_progress_bar=False))
     results = {}
     for name, mask, labels in tasks(ch):
         idx = np.flatnonzero(mask)
@@ -69,3 +71,31 @@ def run(index):
         scores, _ = cross_validate([texts[i] for i in idx], V[idx], lab)
         results[name] = {"n": int(len(idx)), "classes": int(len(set(lab))), **scores}
     return results
+
+
+def main(argv=None):
+    """Evaluate corrected features without overwriting the archived historical run."""
+    import argparse
+    import json
+    from pathlib import Path
+    from .index import DB, MODEL, ROOT, Index
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--db", type=Path, default=DB)
+    parser.add_argument("--output", type=Path, default=ROOT / "eval/results/classification_corrected.json")
+    args = parser.parse_args(argv)
+    ix = Index(db=args.db)
+    try:
+        report = {"features": {"text": "cleaned heading and body", "encoder": MODEL,
+                               "retrieval_vectors_reused": False, "folds": 5, "seed": 0},
+                  "results": run(ix)}
+    finally:
+        ix.con.close()
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps(report, indent=2))
+    return report
+
+
+if __name__ == "__main__":
+    main()

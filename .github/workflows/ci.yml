@@ -5,11 +5,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # The offline checker comparison reads the frozen baseline commit.
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
       - run: pip install -r requirements-ci.txt
       - run: python -m pytest -q tests
+      - name: Reproduce the synthetic citation-binding report without a model
+        run: python eval/eval_claim_guard.py --check
+      - name: Check mutation harness failure handling and source restoration
+        run: python tests/mutate.py --self-test
       - name: Mutation check (every deliberate bug must fail the tests)
         run: python tests/mutate.py
   docker:

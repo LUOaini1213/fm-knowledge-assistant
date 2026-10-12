@@ -36,9 +36,14 @@ class BM25:
             s[i] = sum(self.idf.get(t, 0.0) * c[t] * (self.k1 + 1) / (c[t] + norm) for t in q if t in c)
         return s
 
-    def top(self, query, k=10):
+    def top(self, query, k=10, allowed_ids=None):
+        """Rank allowed chunks using the original corpus's IDF and length statistics."""
         s = self.scores(query)
-        idx = np.argsort(-s)[:k]
+        candidates = np.arange(len(s))
+        if allowed_ids is not None:
+            allowed_ids = set(allowed_ids)
+            candidates = np.array([i for i in candidates if i in allowed_ids], dtype=int)
+        idx = candidates[np.argsort(-s[candidates])[:k]]
         return [(int(i), float(s[i])) for i in idx if s[i] > 0]
 
 
@@ -54,11 +59,23 @@ class VectorStore:
         self.con.executemany("insert into vectors values (?, ?)", [(int(i), list(map(float, v))) for i, v in zip(ids, vectors)])
         self.con.execute("create index vec_hnsw on vectors using hnsw (v) with (metric = 'cosine')")
 
-    def top(self, qvec, k=10):
+    def top(self, qvec, k=10, allowed_ids=None):
+        """Apply any document restriction before ordering and limiting vector candidates."""
+        vector = list(map(float, qvec))
+        params = [vector]
+        where = ""
+        if allowed_ids is not None:
+            ids = sorted({int(i) for i in allowed_ids})
+            if not ids:
+                return []
+            where = "where chunk_id in (select unnest(?)) "
+            params.append(ids)
+        params.append(vector)
         rows = self.con.execute(
             f"select chunk_id, 1 - array_cosine_distance(v, ?::FLOAT[{self.dim}]) as sim from vectors "
+            + where +
             f"order by array_cosine_distance(v, ?::FLOAT[{self.dim}]) limit {int(k)}",
-            [list(map(float, qvec))] * 2).fetchall()
+            params).fetchall()
         return [(int(i), float(s)) for i, s in rows]
 
 

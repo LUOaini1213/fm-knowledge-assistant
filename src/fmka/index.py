@@ -4,6 +4,8 @@ Nothing built here is committed: the chunk text and vectors are derived from doc
 redistribution, so each user rebuilds them locally from the official URLs in sources.json (python -m fmka.cli build).
 """
 import json
+import os
+import tempfile
 from pathlib import Path
 
 import duckdb
@@ -32,6 +34,7 @@ def passage_text(row, titles):
 
 
 def build(sources=ROOT / "sources.json", raw=ROOT / "data" / "raw", db=DB, model=None):
+    db = Path(db)
     chunks = pd.DataFrame(parse_all(sources, raw))
     chunks.insert(0, "chunk_id", range(len(chunks)))
     titles = {s["id"]: s["title"] for s in json.loads(Path(sources).read_text(encoding="utf-8"))}
@@ -39,13 +42,23 @@ def build(sources=ROOT / "sources.json", raw=ROOT / "data" / "raw", db=DB, model
     vecs = model.encode([passage_text(r, titles) for r in chunks.to_dict("records")], batch_size=64,
                         normalize_embeddings=True, show_progress_bar=False)
     db.parent.mkdir(parents=True, exist_ok=True)
-    if Path(db).exists():
-        Path(db).unlink()
-    con = duckdb.connect(str(db))
-    con.execute("create table chunks as select * from chunks")
-    con.execute("create table sources as select * from read_json_auto(?)", [str(sources)])
-    VectorStore(con, DIM).build(chunks.chunk_id, vecs)
-    con.close()
+    # Build beside the destination, then publish only the fully closed database.
+    # An extension/vector/write failure must leave the previous index usable.
+    with tempfile.TemporaryDirectory(prefix=f".{db.name}.build-", dir=db.parent) as tmp:
+        staged = Path(tmp) / db.name
+        con = duckdb.connect(str(staged))
+        try:
+            # executemany otherwise commits every row, making first-start builds
+            # unnecessarily slow on container filesystems.
+            con.execute("BEGIN TRANSACTION")
+            con.execute("create table chunks as select * from chunks")
+            con.execute("create table sources as select * from read_json_auto(?)", [str(sources)])
+            VectorStore(con, DIM).build(chunks.chunk_id, vecs)
+            con.execute("COMMIT")
+            con.execute("CHECKPOINT")
+        finally:
+            con.close()
+        os.replace(staged, db)
     return len(chunks)
 
 
