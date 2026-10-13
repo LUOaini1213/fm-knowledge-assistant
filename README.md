@@ -6,7 +6,7 @@ Cited search and question answering over Singapore building and facilities-manag
 - **Grounded answers:** a draft is shown only if all of these hold:
   - it cites the supplied passages;
   - recognized numeric values appear in cited passages, with no unsupported numeric expressions;
-  - each supported quantitative statement has local citations and matches the source quantity's value, unit, comparator and lexical subject; an unbound or ambiguous quantity is unverified;
+  - each supported quantitative statement has local citations and matches the source quantity's value, unit, comparator and lexical subject; an unbound or ambiguous quantity is unverified. A citation binds to the one sentence next to it, whether it is written after the sentence ("X [1].", "X. [1]") or before it ("[1] X.", "According to [1], X.");
   - the question is close enough to the corpus.
   Low similarity or `NOT_FOUND` yields an abstention. A draft that fails validation is withheld with `unverified` status, which means the draft failed the checks, not that the corpus lacks the answer. CLI/API do not publish that draft; the Python `Answer.text` retains it for internal evaluation.
 - **Document intelligence:**
@@ -39,7 +39,7 @@ Parsing cuts numbered documents at clause numbers (for example "2.3.9", "CLAUSE 
 
 ## Evaluation results
 
-The retrieval, answering and extraction tables below are archived measurements, produced before the review fixes. They have not been rerun with the numeric parser or quantity-binding guard. Regression tests establish the corrected behavior, not a new model accuracy claim. The archived outputs in `eval/results/` remain unchanged; corrected classification and the synthetic checker comparison use separate files.
+Retrieval and requirement extraction were rerun on 2026-10-14 at the current code and reproduce the tables below exactly. Generated answers were measured again on the same day, in two runs; see [Grounded answering](#grounded-answering-48-questions). The earlier answer table (v1–v4) was measured before the quantity/citation guard was added on 2026-10-10. It is kept as history and does not describe the current system. Corrected classification and the synthetic checker comparison use separate result files.
 
 ### Retrieval (40 answerable questions)
 
@@ -55,21 +55,43 @@ A hit means a chunk with the gold clause or page is ranked within the top k.
 
 The set has 40 answerable questions and 8 that the corpus does not cover. Each unanswerable question was checked by keyword search to have no answer in the corpus, and several are deliberate near misses: the codes have cooling-tower siting rules but no cleaning interval, and toilet illuminance but not office illuminance.
 
-The questions are split into a development set (q01–q20, u01–u04) and a test set (q21–q40, u05–u08). The abstention threshold (0.725 cosine) and every fix below were chosen from development errors.
+The questions are split into a development set (q01–q20, u01–u04) and a test set (q21–q40, u05–u08). The abstention threshold (0.725 cosine) and the archived v2–v4 fixes were chosen from development errors. The 2026-10-14 citation-placement fix came from an independent test of the app and from development drafts.
 
 An answer counts as correct only if it states the expected values **and** cites a gold clause.
+
+#### Current code, measured 2026-10-14
+
+The model is qwen2.5:3b-16k through Ollama at temperature 0, on a GTX 1650 that another job was also using. Requests that timed out were sent again unchanged. The table also scores each model draft, whether or not it was shown. Per-question records, without draft text, are in [`eval/results/qa_runs_2026-10-14.json`](eval/results/qa_runs_2026-10-14.json).
+
+| Guard | Run | Shown and correct (dev / test) | Shown but wrong | Withheld as unverified (dev / test) | Answerable abstained | Drafts correct with gold citation (dev / test) | Unanswerable abstained / 8 |
+|---|---|---|---|---|---|---|---|
+| `13a209d`, before the citation-placement fix | 1 | 0 / 0 | 0 | 19 / 19 | 2 | 18 / 16 | 8 |
+| `e091712`, current | 1 | 0 / 0 | 0 | 18 / 19 | 3 | 17 / 16 | 8 |
+| `e091712`, current | 2 | 0 / 0 | 0 | 18 / 20 | 2 | 17 / 17 | 8 |
+
+What the measurement shows:
+
+- **The current system shows no generated answer.** In both runs, none of the 40 answerable questions got a shown answer. All 8 unanswerable questions were refused and no wrong answer was shown. When a draft is withheld, `/ask` returns the withheld message with references to the cited and retrieved clauses.
+- **The model's drafts are mostly right.** 33 and 34 of the 40 drafts state the expected values and cite a gold clause. The guard withholds all of them.
+- **Citation placement was one cause, and it is fixed.** The model usually writes the citation before the sentence ("[1] A spiral staircase ..."), while the guard bound a citation only to the text before it. Before the fix, 29 of 40 drafts had a statement with no valid local citation. A citation now binds to the one sentence next to it, on either side, and sentence-initial phrases such as "According to [1]," count as citations. After the fix, 12 and 13 of 40 drafts still have an uncited statement. In most of these the model cites only the first sentence of a multi-sentence answer, and the guard refuses the rest by design.
+- **The quantity grammar is now the limiting check.** As a diagnostic, each run's drafts were rescored with every sentence credited with every citation in its draft. This binding is deliberately too permissive and is not used by the system. Even so, only 1 of the 33 or 34 correct drafts passes, and 1 wrong draft also passes. Most correct drafts paraphrase the source, and the subject check requires the source clause's own wording. Others state two quantities in one sentence ("1500 mm by 1750 mm") or a quantity the grammar does not parse. These checks are what keep subject-transfer errors out, so they have not been loosened to raise the answer rate.
+- **Run-to-run variation.** The two runs differ in the text of 10 of the 48 drafts, in the status of 1 question (q29 abstained as NOT_FOUND in run 1 and was withheld in run 2), and in the correctness of 1 draft.
+
+#### History: before the quantity/citation guard (archived, measured before 2026-10-10)
+
+These runs used the earlier numeric-membership check, which accepted any number found in a cited passage. [`eval/results/qa_runs.json`](eval/results/qa_runs.json) keeps them unchanged.
 
 | Run | Change | Test: correct / 20 | Test: shown but wrong | Unanswerable abstained / 8 |
 |---|---|---|---|---|
 | v1 | first run | 14 | 3 | 8 |
 | v2 | numbers in the passage header count as sourced; retry once when the model forgets to cite | 16 | 1 | 8 |
 | v3 | the retry prompt shows "[1]" instead of the literal "[n]" that the model had copied | 18 | 2 | 8 |
-| v4 | tokenizer splits clause numbers from words ("cl.2.3.9" → "cl", "2.3.9"); **final** | 17 | 2 | 8 |
+| v4 | tokenizer splits clause numbers from words ("cl.2.3.9" → "cl", "2.3.9") | 17 | 2 | 8 |
 
-Notes on the runs:
+Notes on the archived runs:
 
 - **q36 gold widened after v1.** The fix in v2 also added a second gold passage to q36, because page 70 states the same 1.45 baseline.
-- **Run-to-run variation.** v3 and v4 differ by one test question with the same model and near-identical code. The 3B model varies by about one answer between runs.
+- **Run-to-run variation.** v3 and v4 differ by one test question with the same model and near-identical code.
 - **What the checks caught** in v4:
   - q09: the model invented "1:8". The number check withheld it.
   - q39: an extra number, "5000", appeared that is not in the cited passage. The answer was withheld.
@@ -77,7 +99,7 @@ Notes on the runs:
   - q38 is incomplete: it gives the ±5% tolerance but not the 80% condition.
   - q33 describes the evaluation framework without the literal "KPI" that the metric looks for.
 
-**An archived failure of numeric membership.** Asked "How often must cooling towers be cleaned?" at a looser threshold (0.70), the model answered "every 12 months" and cited NEA clause 3.4. That clause gives 12 months for kitchen exhaust ducts, not for cooling towers. The old number check passed because "12" was in the cited passage. At the default threshold of 0.725 the question was refused, because its best match scored 0.712. This generated-answer experiment has not been rerun; the new guard is tested with synthetic examples of subject transfer and subjectless quantity fragments.
+**An archived failure of numeric membership.** Asked "How often must cooling towers be cleaned?" at a looser threshold (0.70), the model answered "every 12 months" and cited NEA clause 3.4. That clause gives 12 months for kitchen exhaust ducts, not for cooling towers. The old number check passed because "12" was in the cited passage. At the default threshold of 0.725 the question was refused, because its best match scored 0.712. This failure is why the quantity/citation guard exists. The guard is tested with synthetic examples of subject transfer and subjectless quantity fragments.
 
 I tried two further checks against this failure:
 
@@ -86,14 +108,14 @@ I tried two further checks against this failure:
 
 ### Offline quantity-binding challenge cases
 
-[The authored suite](eval/claim_guard_cases.jsonl) contains 25 incorrect bindings, 18 correct examples and two unscored policy boundaries. It covers unit and object transfers, changed comparisons, local citation swaps, metadata borrowing, multiple quantities, supported number spellings and unsupported forms. Examples were written for checker review, not sampled from the corpus or produced by a model.
+[The authored suite](eval/claim_guard_cases.jsonl) contains 34 incorrect bindings, 24 correct examples and two unscored policy boundaries. It covers unit and object transfers, changed comparisons, local citation swaps, metadata borrowing, multiple quantities, supported number spellings and unsupported forms. Since 2026-10-14 it also covers citations written before their sentence ("[1] X.", bullets, "According to [1], X."), with swapped, borrowed and doubly used leading citations among the incorrect bindings. Examples were written for checker review, not sampled from the corpus or produced by a model.
 
 `python eval/eval_claim_guard.py` compares the frozen `8b8591f` numeric-membership checker with the current checker. [The report](eval/results/claim_guard.json) records every acceptance/refusal and both source fingerprints. `--check` reproduces the report without writing and fails if any incorrect challenge example is accepted. Correct examples refused by the conservative policy are recorded separately; neither this suite nor its rejection rate is a new LLM quality score.
 
-| Checker | Incorrect examples rejected / 25 | Correct examples accepted / 18 | Correct examples refused / 18 |
+| Checker | Incorrect examples rejected / 34 | Correct examples accepted / 24 | Correct examples refused / 24 |
 |---|---|---|---|
-| Frozen numeric membership (`8b8591f`) | 0 | 18 | 0 |
-| Current quantity/citation guard | 25 | 18 | 0 |
+| Frozen numeric membership (`8b8591f`) | 3 | 24 | 0 |
+| Current quantity/citation guard | 34 | 24 | 0 |
 
 Both unscored boundaries are conservatively refused: an omitted applicability condition and a logically weaker comparator. Zero refusals in these authored positive examples does not establish a production refusal rate; unfamiliar but valid paraphrases can still be withheld.
 
@@ -150,6 +172,7 @@ The tests cover:
 - the API endpoints, including withholding failed drafts and providing readable extractive passages;
 - complete English and digit numeric expressions, cited-source boundaries, and unsupported syntax;
 - local quantity/citation binding, unit aliases, exact comparisons, subject mismatches, withheld subjectless answers, and per-claim optional judging;
+- citation placement: trailing, leading, bulleted and reporting-phrase citations each bind to one sentence, and swapped, borrowed or doubly used citations are refused;
 - restricted retrieval with matching documents beyond the global candidate pool;
 - failed and successful index publication, preserving the previous database until the replacement is complete;
 - classification feature inputs and real cross-validation training/validation isolation.
@@ -184,5 +207,6 @@ Run the commands from the repository root with `PYTHONPATH=src`. The Docker imag
 ## Limits
 
 - The corpus is eight documents. Tables and drawings are read as flattened text, so answers that live only in a table cell or a figure are weak.
+- With qwen2.5:3b, the quantity/citation guard currently withholds every generated answer in the evaluation set (see above). In practice the system is a cited-clause search with abstention. Its answer path needs a model that quotes the source more closely, or a guard that recognises paraphrased subjects without letting subject transfer through.
 - Abstention relies on a similarity threshold chosen on 24 development questions, and the answerable and unanswerable similarity ranges overlap (0.689–0.893 against 0.683–0.741).
 - The evaluation set is small (48 questions), and I wrote it myself.
