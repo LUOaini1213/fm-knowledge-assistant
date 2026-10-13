@@ -73,8 +73,29 @@ def _clauses(text):
             for p in COORD.split(sentence) if p.strip(" \t\r\n.,;:!?\"“”")]
 
 
+# A sentence-initial reporting phrase around a citation group is the citation, not
+# part of the claim: "According to [1], X." and "[1] states that X." bind [1] to X.
+_GROUP = r"(\[\d+\](?:\s*\[\d+\])*)"
+_START = r"(^|[.!?;\n]\s*)((?:[-*•]\s*)?)"
+CITE_PHRASES = [
+    re.compile(_START + r"(?:according to|as (?:stated|specified|given|set out) in|as per)\s+(?:passage\s+)?"
+               + _GROUP + r"\s*[,:]?\s+", re.I),
+    re.compile(_START + r"(?:passage\s+)?" + _GROUP
+               + r"\s+(?:states|specifies|says|notes|indicates|mentions)(?:\s+that)?\s*[,:]?\s+", re.I),
+]
+# Enumerators copied from the source ("a.", "(ii)") are not statements.
+LIST_MARKER = re.compile(r"\(?(?:[a-z]|[ivx]{2,4})\)?", re.I)
+
+
+def _citation_phrases(draft):
+    for pattern in CITE_PHRASES:
+        draft = pattern.sub(lambda m: f"{m[1]}{m[2]}{m[3]} ", draft)
+    return draft
+
+
 def _has_content(text):
-    return any(ch.isalnum() for ch in text)
+    text = text.strip(" \t\r\n.,;:!?\"“”-*•")
+    return any(ch.isalnum() for ch in text) and not LIST_MARKER.fullmatch(text)
 
 
 def _sentences(segment, lead):
@@ -94,9 +115,11 @@ def claims(draft):
     just before it if there is one, otherwise to the sentence just after it. A
     group never covers a second sentence in either direction: neither earlier nor
     later sentences can borrow it. Coordination inside a statement is separated
-    while retaining the statement's group.
+    while retaining the statement's group. A sentence-initial reporting phrase
+    ("According to [1], ...", "[1] states that ...") is read as a leading group.
     """
     out, start, lead = [], 0, ()
+    draft = _citation_phrases(draft)
 
     def emit(sentences, last_refs):
         for pos, (sentence, refs) in enumerate(sentences):

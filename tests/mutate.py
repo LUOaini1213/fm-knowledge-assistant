@@ -81,6 +81,11 @@ MUTANTS = [
     ("src/fmka/claims.py", "emit(sentences, ())\n            lead = refs", "emit(sentences, refs)\n            lead = refs"),
     ("src/fmka/claims.py", 'at_boundary = not sentences or bool(re.search(r"[.!?;\\n]", tail))', "at_boundary = True"),
     ("src/fmka/claims.py", "if _has_content(s)]", "if s.strip()]"),
+    ("src/fmka/claims.py", "draft = _citation_phrases(draft)", "pass"),
+    ("src/fmka/claims.py", "return any(ch.isalnum() for ch in text) and not LIST_MARKER.fullmatch(text)",
+     "return any(ch.isalnum() for ch in text)"),
+    ("src/fmka/claims.py", 'draft = pattern.sub(lambda m: f"{m[1]}{m[2]}{m[3]} ", draft)',
+     'draft = pattern.sub(lambda m: f"{m[1]}{m[2]} ", draft)'),
 ]
 
 class HarnessError(RuntimeError):

@@ -134,6 +134,26 @@ def test_leading_citation_still_runs_the_quantity_guard(draft, source):
     assert any("claim 1:" in p for p in problems)
 
 
+@pytest.mark.parametrize("draft", [
+    "According to [1], door width is 850 mm. According to [2], handrail height is 900 mm.",
+    "[1] states that door width is 850 mm. Passage [2] specifies that handrail height is 900 mm.",
+    "- As stated in [1], door width is 850 mm.\n- [2] notes handrail height is 900 mm.",
+    "[1] a. Door width is 850 mm. [2] b. Handrail height is 900 mm.",
+])
+def test_reporting_phrases_and_copied_enumerators_bind_like_leading_citations(draft):
+    assert verify(draft, ["Door width is 850 mm.", "Handrail height is 900 mm."]) == ([1, 2], [])
+
+
+@pytest.mark.parametrize("draft", [
+    "According to [2], door width is 850 mm. According to [1], handrail height is 900 mm.",
+    "According to [1][2], door width is 850 mm. Handrail height is 900 mm.",
+    "[2] states that door width is 850 mm.",
+    "[1] a. Door width is 850 mm. b. Handrail height is 900 mm.",
+])
+def test_reporting_phrases_and_enumerators_cannot_bind_wrong_or_extra_sentences(draft):
+    assert verify(draft, ["Door width is 850 mm.", "Handrail height is 900 mm."])[1]
+
+
 def test_leading_citation_claim_structure():
     assert [(c.text, c.citations) for c in claims("[1] A is 5 m. B is 6 m. [2] C is 7 m.")] == [
         ("A is 5 m", (1,)), ("B is 6 m", (2,)), ("C is 7 m", ())]
