@@ -73,21 +73,50 @@ def _clauses(text):
             for p in COORD.split(sentence) if p.strip(" \t\r\n.,;:!?\"“”")]
 
 
-def claims(draft):
-    """A trailing citation belongs only to its immediately preceding statement.
+def _has_content(text):
+    return any(ch.isalnum() for ch in text)
 
-    Adjacent citations form one group. Earlier sentences cannot borrow that group;
-    coordination inside a statement is separated while retaining its own group.
+
+def _sentences(segment, lead):
+    """Sentences of a citation-free segment; only the first carries a preceding leading group."""
+    sentences = [[s, ()] for s in SENTENCE.split(segment) if _has_content(s)]
+    if sentences:
+        sentences[0][1] = lead
+    return sentences
+
+
+def claims(draft):
+    """Bind each citation group to exactly one adjacent sentence.
+
+    Adjacent citations form one group. A group written directly after text in the
+    same sentence ("A [1].", "A [1] and B [2].") belongs to that text. A group at a
+    sentence boundary ("A. [1]", "[1] A.", "- [1] A") belongs to the uncited sentence
+    just before it if there is one, otherwise to the sentence just after it. A
+    group never covers a second sentence in either direction: neither earlier nor
+    later sentences can borrow it. Coordination inside a statement is separated
+    while retaining the statement's group.
     """
-    out, start = [], 0
+    out, start, lead = [], 0, ()
+
+    def emit(sentences, last_refs):
+        for pos, (sentence, refs) in enumerate(sentences):
+            if pos == len(sentences) - 1:
+                refs = tuple(dict.fromkeys(refs + last_refs))
+            out.extend(Claim(c, refs) for c in _clauses(sentence))
+
     for match in CITATIONS.finditer(draft):
-        text = draft[start:match.start()].strip(" \t\r\n.,;:!?")
-        sentences = [s for s in SENTENCE.split(text) if s.strip()]
+        segment = draft[start:match.start()]
         refs = tuple(dict.fromkeys(int(c) for c in re.findall(r"\d+", match[0])))
-        for pos, sentence in enumerate(sentences):
-            out.extend(Claim(c, refs if pos == len(sentences) - 1 else ()) for c in _clauses(sentence))
+        sentences, lead = _sentences(segment, lead), ()
+        tail = re.sub(r"^.*[^\W_]", "", segment, flags=re.S)  # text after the last letter/digit
+        at_boundary = not sentences or bool(re.search(r"[.!?;\n]", tail))
+        if not at_boundary or (sentences and not sentences[-1][1]):
+            emit(sentences, refs)  # trailing: the immediately preceding (uncited) sentence
+        else:
+            emit(sentences, ())
+            lead = refs            # leading: the next sentence only
         start = match.end()
-    out.extend(Claim(c, ()) for c in _clauses(draft[start:]))
+    emit(_sentences(draft[start:], lead), ())
     return out
 
 

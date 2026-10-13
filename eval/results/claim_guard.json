@@ -413,15 +413,123 @@
         "expected": "accept",
         "id": "citation-after-period",
         "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "reject",
+        "id": "leading-swapped-citations",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "reject",
+        "id": "leading-group-later-sentence",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "reject",
+        "id": "leading-bullet-swapped",
+        "problems": []
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "leading-repeated-citation-next-sentence",
+        "problems": [
+          "numbers not found in the cited passages: ['60']"
+        ]
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "leading-subject-transfer",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "leading-metadata-page-borrow",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "accept",
+        "id": "leading-two-sentences",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "accept",
+        "id": "leading-bullets",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "leading-colon",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "accept",
+        "id": "trailing-then-leading",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "reject",
+        "id": "leading-group-not-also-trailing",
+        "problems": []
       }
     ],
     "summary": {
-      "correct_accepted": 18,
-      "correct_examples": 18,
+      "correct_accepted": 22,
+      "correct_examples": 22,
       "correct_refused": 0,
-      "incorrect_accepted": 25,
-      "incorrect_examples": 25,
-      "incorrect_rejected": 0,
+      "incorrect_accepted": 31,
+      "incorrect_examples": 32,
+      "incorrect_rejected": 1,
       "unscored_boundaries": 2
     }
   },
@@ -430,7 +538,7 @@
     "src/fmka/answer.py": "99d86df8c0cebe884c24031d59c451b67efba0faa9457abfe3a4262dbd7ee342",
     "src/fmka/numeric.py": "b7c9dd655ec632f34c4f7c56e0c4e7d957120f21aa579ba550c8596f85da2440"
   },
-  "case_count": 45,
+  "case_count": 56,
   "current": {
     "outcomes": [
       {
@@ -600,8 +708,7 @@
         "expected": "reject",
         "id": "chinese-word-quantity",
         "problems": [
-          "claim 1: unsupported claim language/subject spelling",
-          "claim 2: no valid local citation"
+          "claim 1: unsupported claim language/subject spelling"
         ]
       },
       {
@@ -612,8 +719,7 @@
         "expected": "reject",
         "id": "chinese-digit-quantity",
         "problems": [
-          "claim 1: unsupported claim language/subject spelling",
-          "claim 2: no valid local citation"
+          "claim 1: unsupported claim language/subject spelling"
         ]
       },
       {
@@ -908,15 +1014,144 @@
         "expected": "accept",
         "id": "citation-after-period",
         "problems": []
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "reject",
+        "id": "leading-swapped-citations",
+        "problems": [
+          "claim 1: numbers absent from its local citations: ['850']",
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations",
+          "claim 2: numbers absent from its local citations: ['60']",
+          "claim 2: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "reject",
+        "id": "leading-group-later-sentence",
+        "problems": [
+          "claim 2: no valid local citation"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "reject",
+        "id": "leading-bullet-swapped",
+        "problems": [
+          "claim 1: numbers absent from its local citations: ['850']",
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations",
+          "claim 2: numbers absent from its local citations: ['60']",
+          "claim 2: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "leading-repeated-citation-next-sentence",
+        "problems": [
+          "numbers not found in the cited passages: ['60']",
+          "claim 2: numbers absent from its local citations: ['60']",
+          "claim 2: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "leading-subject-transfer",
+        "problems": [
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1
+        ],
+        "expected": "reject",
+        "id": "leading-metadata-page-borrow",
+        "problems": [
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "accept",
+        "id": "leading-two-sentences",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "accept",
+        "id": "leading-bullets",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1
+        ],
+        "expected": "accept",
+        "id": "leading-colon",
+        "problems": []
+      },
+      {
+        "accepted": true,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "accept",
+        "id": "trailing-then-leading",
+        "problems": []
+      },
+      {
+        "accepted": false,
+        "cited": [
+          1,
+          2
+        ],
+        "expected": "reject",
+        "id": "leading-group-not-also-trailing",
+        "problems": [
+          "claim 1: numbers absent from its local citations: ['850']",
+          "claim 1: quantity value/unit/comparator/subject not supported by its local citations"
+        ]
       }
     ],
     "summary": {
-      "correct_accepted": 18,
-      "correct_examples": 18,
+      "correct_accepted": 22,
+      "correct_examples": 22,
       "correct_refused": 0,
       "incorrect_accepted": 0,
-      "incorrect_examples": 25,
-      "incorrect_rejected": 25,
+      "incorrect_examples": 32,
+      "incorrect_rejected": 32,
       "unscored_boundaries": 2
     }
   },
@@ -924,7 +1159,7 @@
     "src/fmka/__init__.py": "91447944015cec709e8aa7655f7e9d64e1e4508e7023a57fe3746911c0fc6fed",
     "src/fmka/answer.py": "d72b469ef9544bc5405c9ce180a4605439fab8bb87489725f05f43ac142aa221",
     "src/fmka/api.py": "b9ccb140f8b4143e74d38b3ed3f01738ad7ba6cfb6755f2745d16a47af39353d",
-    "src/fmka/claims.py": "d294a6f41b725706e4bb22021667fce875657a17067cbb3b6d0e2209c91df8f1",
+    "src/fmka/claims.py": "98c2a331b36b37bb30da057afcbaf2d077f11cd2c049819b92f1048cca4af324",
     "src/fmka/classify.py": "beccc174bf995ba6cdeb9d386edfd1efc3c11c0cf24539376333e9dcac20b3e2",
     "src/fmka/cli.py": "d9741737d165bec4aa5b3c96ad0c75a83c01d9c8ab7015db98b3c9001d3ab5b7",
     "src/fmka/extract.py": "9142a10627d262f5f066abc3151fe595281058594e38b1ed376d244eb02c2b29",
@@ -940,5 +1175,5 @@
   "model_or_corpus_calls": 0,
   "schema_version": 1,
   "suite": "eval/claim_guard_cases.jsonl",
-  "suite_sha256": "aec7c0764c0f8b3603bdc482cc89ef7317538f65da66fcb6fd14cc9d8c517ceb"
+  "suite_sha256": "bd9820f08c3645f4782c304f1eab83ec10c488b361e1d2f94b756fe75872044c"
 }

@@ -72,6 +72,15 @@ MUTANTS = [
     ("src/fmka/answer.py", "for n, claim in enumerate(claims(draft), 1):", "for n, claim in enumerate(claims(draft)[:1], 1):"),
     ("src/fmka/answer.py", 'return reply.upper() == "YES"', 'return reply.upper().startswith("YES")'),
     ("src/fmka/claims.py", "if any(c.isalpha() and not c.isascii() for c in text):", "if False:"),
+    # Each citation group binds to one adjacent sentence, before or after it.
+    ("src/fmka/claims.py", "sentences[0][1] = lead", "sentences = [[s, lead] for s, _ in sentences]"),
+    ("src/fmka/claims.py", "lead = refs            # leading", "lead = ()            # leading"),
+    ("src/fmka/claims.py", "if not at_boundary or (sentences and not sentences[-1][1]):", "if not at_boundary:"),
+    ("src/fmka/claims.py", "if not at_boundary or (sentences and not sentences[-1][1]):",
+     "if not at_boundary or sentences:"),
+    ("src/fmka/claims.py", "emit(sentences, ())\n            lead = refs", "emit(sentences, refs)\n            lead = refs"),
+    ("src/fmka/claims.py", 'at_boundary = not sentences or bool(re.search(r"[.!?;\\n]", tail))', "at_boundary = True"),
+    ("src/fmka/claims.py", "if _has_content(s)]", "if s.strip()]"),
 ]
 
 class HarnessError(RuntimeError):

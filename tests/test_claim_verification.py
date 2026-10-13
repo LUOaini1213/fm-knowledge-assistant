@@ -91,6 +91,56 @@ def test_distinct_claims_keep_their_local_positive_citations(draft):
     assert verify(draft, ["Door width is 850 mm.", "Handrail height is 900 mm."]) == ([1, 2], [])
 
 
+@pytest.mark.parametrize("draft", [
+    "[1] Door width is 850 mm. [2] Handrail height is 900 mm.",
+    "[1] Door width is 850 mm.\n[2] Handrail height is 900 mm.",
+    "- [1] Door width is 850 mm.\n- [2] Handrail height is 900 mm.",
+    "[1]: Door width is 850 mm. [2]: Handrail height is 900 mm.",
+    "[1][2] Door width is 850 mm and handrail height is 900 mm.",
+    "Door width is 850 mm [1]. [2] Handrail height is 900 mm.",
+    "[1] Door width is 850 mm. Handrail height is 900 mm [2].",
+    "[1] Door width is 850 mm. Handrail height is 900 mm. [2]",
+])
+def test_leading_citations_bind_to_the_following_sentence(draft):
+    assert verify(draft, ["Door width is 850 mm.", "Handrail height is 900 mm."]) == ([1, 2], [])
+
+
+@pytest.mark.parametrize("draft", [
+    "[2] Door width is 850 mm. [1] Handrail height is 900 mm.",       # swapped leading citations
+    "[1] Door width is 850 mm. Handrail height is 900 mm.",           # later sentence cannot borrow
+    "[1][2] Door width is 850 mm. Handrail height is 900 mm.",        # nor borrow a leading group
+    "[1] Door width is 850 mm. Handrail height is 900 mm. [1]",       # trailing [1] is the second sentence's
+    "[2] Door width is 850 mm [1]. Handrail height is 900 mm.",
+    "[1] Door width is 850 mm and handrail height is 900 mm.",        # coordination keeps one local group
+    "- [2] Door width is 850 mm.\n- [1] Handrail height is 900 mm.",
+    "Door width is 850 mm [1]. [1] Handrail height is 900 mm.",
+    "[2] Door width is 850 mm. [1][2] Handrail height is 900 mm.",    # a leading group is not also trailing
+])
+def test_leading_citations_cannot_bind_wrong_or_extra_sentences(draft):
+    sources = ["Door width is 850 mm.", "Handrail height is 900 mm."]
+    assert verify(draft, sources)[1]
+
+
+@pytest.mark.parametrize("draft,source", [
+    ("[1] Cooling tower cleaning occurs every 12 months.", "Kitchen exhaust duct cleaning occurs every 12 months."),
+    ("[1] Door width is at most 850 mm.", "Door width is at least 850 mm."),
+    ("[1] Door width is 35 mm.", "(2023 Code, clause 2.2.7, page 35) Door width is 850 mm."),
+    ("[1] Every 12 months.", "Kitchen exhaust duct cleaning occurs every 12 months."),
+    ("[1] It requires 850 mm clear width.", "Exit doors require 850 mm clear width."),
+])
+def test_leading_citation_still_runs_the_quantity_guard(draft, source):
+    cited, problems = verify(draft, [source])
+    assert cited == [1]
+    assert any("claim 1:" in p for p in problems)
+
+
+def test_leading_citation_claim_structure():
+    assert [(c.text, c.citations) for c in claims("[1] A is 5 m. B is 6 m. [2] C is 7 m.")] == [
+        ("A is 5 m", (1,)), ("B is 6 m", (2,)), ("C is 7 m", ())]
+    assert [(c.text, c.citations) for c in claims("[1] A is 5 m [2].")] == [("A is 5 m", (1, 2))]
+    assert [(c.text, c.citations) for c in claims("A is 5 m [1]. [2]")] == [("A is 5 m", (1,))]
+
+
 def test_decimal_and_citation_sentence_boundaries():
     assert verify("Door width is 0.85 m. [1]", ["Door width is .85 m."]) == ([1], [])
     assert [(c.text, c.citations) for c in claims("Door width is 0.85 m [1]. Pump interval is 12 months [2].")] == [
