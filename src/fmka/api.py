@@ -4,7 +4,7 @@ Run: uvicorn fmka.api:app --port 8000   (after building the index with python -m
 """
 from functools import lru_cache
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel, Field
 
 from . import __version__
@@ -14,6 +14,23 @@ from .search import MODES, search
 
 app = FastAPI(title="FM Knowledge Assistant", version=__version__,
               description="Cited search and question answering over Singapore building and facilities-management codes.")
+
+
+# Swagger UI (/docs) and ReDoc load scripts from a CDN; every other response is JSON and needs no content at all.
+_DOC_PAGES = ("/docs", "/redoc")
+_JSON_CSP = "default-src 'none'; frame-ancestors 'none'"
+
+
+@app.middleware("http")
+async def security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("X-Frame-Options", "DENY")
+    response.headers.setdefault("Referrer-Policy", "no-referrer")
+    response.headers.setdefault("Cache-Control", "no-store")
+    if not request.url.path.startswith(_DOC_PAGES):
+        response.headers.setdefault("Content-Security-Policy", _JSON_CSP)
+    return response
 
 
 @lru_cache(maxsize=1)

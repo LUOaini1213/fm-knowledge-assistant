@@ -52,6 +52,9 @@ MUTANTS = [
     ("src/fmka/api.py", '"text": ix.row(c)["text"]', '"text": ""'),
     ("src/fmka/cli.py", 'text = "The generated answer failed validation and has been withheld." if a.status == "unverified" else a.text',
      "text = a.text"),
+    # API responses keep their hardening headers.
+    ("src/fmka/api.py", 'response.headers.setdefault("X-Content-Type-Options", "nosniff")', "pass"),
+    ("src/fmka/api.py", 'response.headers.setdefault("Content-Security-Policy", _JSON_CSP)', "pass"),
     # Numeric verification must include worded values, unsupported forms and signs.
     ("src/fmka/numeric.py", "for match in WORD_SPAN.finditer(text):", "for match in ():"),
     ("src/fmka/answer.py", 'problems.append(f"unsupported numeric expressions: {unsupported}")', "pass"),
