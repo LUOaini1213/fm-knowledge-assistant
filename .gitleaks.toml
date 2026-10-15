@@ -1,0 +1,12 @@
+# gitleaks configuration: the default rules, plus one documented exception.
+[extend]
+useDefault = true
+
+# eval/results/claim_guard.json records the SHA-256 of every source file so a stale report is detected. The entry
+# for src/fmka/api.py matches the generic-api-key rule because the key contains "api"; it is a file hash, not a secret.
+[[allowlists]]
+description = "SHA-256 fingerprints of source files in the claim-guard report"
+condition = "AND"
+paths = ['''^eval/results/claim_guard\.json$''']
+regexTarget = "line"
+regexes = ['''^\s*"src/fmka/[a-z_]+\.py": "[0-9a-f]{64}",?\s*$''']
