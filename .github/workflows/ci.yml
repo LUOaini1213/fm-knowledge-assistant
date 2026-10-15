@@ -1,13 +1,15 @@
 name: ci
 on: [push, pull_request]
+permissions:
+  contents: read
 jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0  # The offline checker comparison reads the frozen baseline commit.
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.11"
       - run: pip install -r requirements-ci.txt
@@ -21,5 +23,38 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - run: docker build -t fm-knowledge-assistant .
+      - name: The image runs as a non-root user
+        run: test "$(docker image inspect fm-knowledge-assistant --format '{{.Config.User}}')" = app
+      - name: Image CVEs (Trivy; fixable HIGH and CRITICAL fail the job)
+        run: >
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock "$TRIVY" image --quiet
+          --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 fm-knowledge-assistant
+        env:
+          TRIVY: aquasec/trivy:0.76.0@sha256:2416d1f74045b57274df1a340eee6b510cacd73c66a6ccb8da092b117eb7d222
+  security:
+    runs-on: ubuntu-latest
+    env:
+      TRIVY: aquasec/trivy:0.76.0@sha256:2416d1f74045b57274df1a340eee6b510cacd73c66a6ccb8da092b117eb7d222
+      GITLEAKS: zricethezav/gitleaks:v8.30.1@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0  # gitleaks reads every commit
+      - name: Secrets in git history (gitleaks; the one exception is documented in .gitleaks.toml)
+        run: docker run --rm -v "$PWD:/repo" "$GITLEAKS" git /repo --redact --no-banner
+      - name: Python dependency CVEs (pip-audit)
+        run: pipx run pip-audit==2.10.1 --progress-spinner off -r requirements.txt
+      - name: SAST (Semgrep; ERROR-severity findings fail the job)
+        # sqlalchemy-execute-raw-query is excluded: the project has no SQLAlchemy, and its two matches in retrieval.py
+        # format an integer vector dimension and an int() row limit into DuckDB statements; the query vector and the
+        # allowed chunk ids are bound parameters.
+        run: >
+          pipx run semgrep==1.181.0 scan --metrics=off --error --severity ERROR
+          --config p/default --config p/owasp-top-ten --config p/python --config p/dockerfile --config p/secrets
+          --exclude-rule python.sqlalchemy.security.sqlalchemy-execute-raw-query.sqlalchemy-execute-raw-query
+      - name: Dependencies, Dockerfile and secrets (Trivy; fixable HIGH and CRITICAL fail the job)
+        run: >
+          docker run --rm -v "$PWD:/src" -w /src "$TRIVY" fs --quiet --scanners vuln,misconfig,secret
+          --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 .
