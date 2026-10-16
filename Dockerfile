@@ -5,10 +5,13 @@ FROM python:3.11-slim@sha256:e88e9763f943ec1834f992a4b51e0f24500486803e8bc534e57
 WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PYTHONPATH=/app/src HF_HOME=/app/.cache
 COPY requirements.txt .
-# The base image's own pip, setuptools and wheel carry fixable CVEs (wheel, and jaraco.context vendored in setuptools)
-RUN pip install --no-cache-dir --upgrade pip setuptools wheel \
+# The base image's setuptools and wheel carry fixable CVEs (wheel, and jaraco.context vendored in setuptools), so
+# they are upgraded. pip is not used at run time and is removed at the end: the base image's pip 24.0 has fixable
+# CVEs, and the current pip vendors urllib3 2.7.0, msgpack 1.1.2 and setuptools 70.3.0, which have their own.
+RUN pip install --no-cache-dir --upgrade setuptools wheel \
  && pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu \
- && pip install --no-cache-dir -r requirements.txt
+ && pip install --no-cache-dir -r requirements.txt \
+ && python -m pip uninstall -y pip
 COPY src ./src
 COPY sources.json ./
 # Run as an unprivileged user; it owns only the folders the first start writes (data/ for the index, .cache for the model)
