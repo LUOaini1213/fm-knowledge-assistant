@@ -16,9 +16,14 @@ app = FastAPI(title="FM Knowledge Assistant", version=__version__,
               description="Cited search and question answering over Singapore building and facilities-management codes.")
 
 
-# Swagger UI (/docs) and ReDoc load scripts from a CDN; every other response is JSON and needs no content at all.
+# Every response except the docs pages is JSON and needs no content at all. Swagger UI (/docs) and ReDoc load their
+# script and stylesheet from cdn.jsdelivr.net and run an inline bootstrap script, so they get a policy that allows that.
 _DOC_PAGES = ("/docs", "/redoc")
 _JSON_CSP = "default-src 'none'; frame-ancestors 'none'"
+_DOCS_CSP = ("default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+             "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; "
+             "font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://fastapi.tiangolo.com; "
+             "worker-src 'self' blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'")
 
 
 @app.middleware("http")
@@ -28,8 +33,10 @@ async def security_headers(request: Request, call_next):
     response.headers.setdefault("X-Frame-Options", "DENY")
     response.headers.setdefault("Referrer-Policy", "no-referrer")
     response.headers.setdefault("Cache-Control", "no-store")
-    if not request.url.path.startswith(_DOC_PAGES):
-        response.headers.setdefault("Content-Security-Policy", _JSON_CSP)
+    response.headers.setdefault("Cross-Origin-Resource-Policy", "same-origin")
+    response.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+    docs = request.url.path.startswith(_DOC_PAGES)
+    response.headers.setdefault("Content-Security-Policy", _DOCS_CSP if docs else _JSON_CSP)
     return response
 
 

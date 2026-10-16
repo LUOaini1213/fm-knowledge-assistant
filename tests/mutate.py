@@ -54,7 +54,8 @@ MUTANTS = [
      "text = a.text"),
     # API responses keep their hardening headers.
     ("src/fmka/api.py", 'response.headers.setdefault("X-Content-Type-Options", "nosniff")', "pass"),
-    ("src/fmka/api.py", 'response.headers.setdefault("Content-Security-Policy", _JSON_CSP)', "pass"),
+    ("src/fmka/api.py", 'response.headers.setdefault("Content-Security-Policy", _DOCS_CSP if docs else _JSON_CSP)',
+     'response.headers.setdefault("Content-Security-Policy", _DOCS_CSP)'),
     # Numeric verification must include worded values, unsupported forms and signs.
     ("src/fmka/numeric.py", "for match in WORD_SPAN.finditer(text):", "for match in ():"),
     ("src/fmka/answer.py", 'problems.append(f"unsupported numeric expressions: {unsupported}")', "pass"),
