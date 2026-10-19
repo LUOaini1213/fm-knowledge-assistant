@@ -12,6 +12,18 @@ STOP = set("a an and are as at be by for from has have in is it its of on or sha
            "not no any all be been being can may must should".split())
 
 
+def query_rows(con, sql, params):
+    """Read through a private cursor, including result consumption and cleanup.
+
+    The API shares one Index between worker threads. DuckDB execute() replaces
+    its connection's pending result, so sharing that cursor can mix requests.
+    A short-lived duplicate retains the same database handle (including an
+    in-memory index), without reopening a possibly rebuilt database by path.
+    """
+    with con.cursor() as cursor:
+        return cursor.execute(sql, params).fetchall()
+
+
 def tokenize(text):
     return [t for t in TOKEN.findall(text.lower()) if t not in STOP]
 
@@ -71,11 +83,11 @@ class VectorStore:
             where = "where chunk_id in (select unnest(?)) "
             params.append(ids)
         params.append(vector)
-        rows = self.con.execute(
+        rows = query_rows(self.con,
             f"select chunk_id, 1 - array_cosine_distance(v, ?::FLOAT[{self.dim}]) as sim from vectors "
             + where +
             f"order by array_cosine_distance(v, ?::FLOAT[{self.dim}]) limit {int(k)}",
-            params).fetchall()
+            params)
         return [(int(i), float(s)) for i, s in rows]
 
 

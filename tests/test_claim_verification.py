@@ -64,6 +64,25 @@ def test_bound_quantity_positive_pairs(draft, source):
     assert verify(draft, [source]) == ([1], [])
 
 
+@pytest.mark.parametrize("symbol", ["≠", "±", "∓", "≈", "≅", "≃", "≉", "≲", "≫", "×", "÷"])
+@pytest.mark.parametrize("symbol_in_source", [False, True])
+def test_unparsed_math_symbols_cannot_authorize_exact_quantities(symbol, symbol_in_source):
+    exact = "Door width is 850 mm"
+    modified = f"Door width is {symbol}850 mm"
+    draft, source = (exact, modified) if symbol_in_source else (modified, exact)
+    assert verify(draft + " [1].", [source + "."])[1]
+
+
+@pytest.mark.parametrize("draft,source", [
+    ("Door width is ≥850 mm", "Door width is at least 850 mm"),
+    ("Door width is ≤850 mm", "Door width is at most 850 mm"),
+    ("Temperature is −5 °C", "Temperature is -5 degrees celsius"),
+    ("Temperature is +5 °C", "Temperature is 5 degrees celsius"),
+])
+def test_recognised_bounds_signs_and_units_still_authorize_quantities(draft, source):
+    assert verify(draft + " [1].", [source + "."]) == ([1], [])
+
+
 @pytest.mark.parametrize("draft", [
     "Door width is 850 mm [2]. Handrail height is 900 mm [1].",
     "Door width is 850 mm [2] and handrail height is 900 mm [1].",

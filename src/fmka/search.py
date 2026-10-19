@@ -1,5 +1,5 @@
 """Search modes over the index: bm25, dense, hybrid (reciprocal-rank fusion), with optional document filters."""
-from .retrieval import rrf
+from .retrieval import query_rows, rrf
 
 MODES = ("bm25", "dense", "hybrid")
 
@@ -19,8 +19,8 @@ def search(index, query, k=5, mode="hybrid", docs=None, pool=50):
     ranked = {"bm25": lex, "dense": den, "hybrid": rrf([lex, den], n=pool)}[mode][:k]
     if qv is None:
         return [(i, s, None) for i, s in ranked]
-    vecs = index.con.execute(
-        "select chunk_id, v from vectors where chunk_id in (select unnest(?))", [[int(i) for i, _ in ranked]]).fetchall()
+    vecs = query_rows(index.con,
+        "select chunk_id, v from vectors where chunk_id in (select unnest(?))", [[int(i) for i, _ in ranked]])
     import numpy as np
     sim = {int(i): float(np.dot(np.array(v), qv)) for i, v in vecs}
     return [(i, s, sim.get(int(i))) for i, s in ranked]
