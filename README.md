@@ -172,8 +172,10 @@ The tests cover:
 - the API endpoints, including withholding failed drafts and providing readable extractive passages;
 - complete English and digit numeric expressions, cited-source boundaries, and unsupported syntax;
 - local quantity/citation binding, unit aliases, exact comparisons, subject mismatches, withheld subjectless answers, and per-claim optional judging;
+- unsupported mathematical qualifiers such as ≠, ± and ≈ in answers or sources cannot silently become exact quantities;
 - citation placement: trailing, leading, bulleted and reporting-phrase citations each bind to one sentence, and swapped, borrowed or doubly used citations are refused;
 - restricted retrieval with matching documents beyond the global candidate pool;
+- overlapping HTTP searches and answers keep their DuckDB result cursors, document filters and source references isolated;
 - failed and successful index publication, preserving the previous database until the replacement is complete;
 - classification feature inputs and real cross-validation training/validation isolation.
 

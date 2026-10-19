@@ -202,7 +202,11 @@ def _signature(text):
         return None, "ambiguous range"
     for start, end in reversed(erase):
         text = text[:start] + " " + text[end:]
-    if re.search(r"[<>=!~]", text):
+    # Parsed bounds and numeric signs have been removed above. Any remaining
+    # mathematical symbol changes (or obscures) the claim: e.g. ≠, ± and ≈ must
+    # not disappear when we reduce the subject to words. Apply the same rule to
+    # source clauses so an approximate source cannot authorize an exact value.
+    if any(unicodedata.category(c) == "Sm" or c in "!~" for c in text):
         return None, "unsupported comparison expression"
     words = re.findall(r"[a-z]+", text)
     if PRONOUNS.intersection(words):
