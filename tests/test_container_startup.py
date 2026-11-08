@@ -18,28 +18,33 @@ CASES = [
 
 
 def shell_command(command):
-    if os.name == "nt":
+    """Prefer a POSIX sh on PATH on every OS (Git for Windows provides one).
+
+    WSL is used only when FMKA_TEST_ALLOW_WSL=1, because starting it can boot a virtual machine as a side
+    effect of a plain pytest run.
+    """
+    shell = shutil.which("sh")
+    if shell is not None:
+        return [shell, "-c", command]
+    if os.name == "nt" and os.environ.get("FMKA_TEST_ALLOW_WSL") == "1":
         wsl = shutil.which("wsl")
         if wsl is None:
-            pytest.skip("POSIX startup test requires WSL on Windows")
+            pytest.skip("POSIX startup test: no sh on PATH and no WSL launcher")
         # Windows may ship a wsl.exe launcher without a usable distribution.
         # Probe bytes: its failure diagnostics can be UTF-16, not the locale codec.
         try:
             available = subprocess.run([wsl, "--exec", "sh", "-c", "exit 0"], capture_output=True, timeout=10)
         except (OSError, subprocess.TimeoutExpired):
-            pytest.skip("POSIX startup test requires a usable WSL shell on Windows")
+            pytest.skip("POSIX startup test requires a usable WSL shell")
         if available.returncode:
-            pytest.skip("POSIX startup test requires a usable WSL shell on Windows")
+            pytest.skip("POSIX startup test requires a usable WSL shell")
         return [wsl, "--exec", "sh", "-c", command]
-    shell = shutil.which("sh")
-    if shell is None:
-        pytest.skip("POSIX startup test requires sh")
-    return [shell, "-c", command]
+    pytest.skip("POSIX startup test requires sh on PATH (on Windows: Git for Windows, or set FMKA_TEST_ALLOW_WSL=1)")
 
 
 @pytest.fixture(scope="module")
 def startup_runs(tmp_path_factory):
-    """Use one WSL invocation for all scenarios, also keeping mutation runs inexpensive."""
+    """Use one shell invocation for all scenarios, also keeping mutation runs inexpensive."""
     tmp_path = tmp_path_factory.mktemp("container-startup")
     line = next(line for line in (ROOT / "Dockerfile").read_text(encoding="utf-8").splitlines()
                 if line.startswith("CMD "))
