@@ -13,13 +13,36 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install -r requirements-ci.txt
+      - name: Install the package as the README does, then run the CLI from outside the checkout
+        run: pip install -e . --no-deps && cd "$RUNNER_TEMP" && python -m fmka.cli help
       - run: python -m pytest -q tests
+      - name: README numbers match eval/results
+        run: python eval/check_readme.py
       - name: Reproduce the synthetic citation-binding report without a model
         run: python eval/eval_claim_guard.py --check
       - name: Check mutation harness failure handling and source restoration
         run: python tests/mutate.py --self-test
       - name: Mutation check (every deliberate bug must fail the tests)
         run: python tests/mutate.py
+  windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0  # The offline checker comparison reads the frozen baseline commit.
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements-ci.txt
+      - name: Install the package as the README does, then run the CLI from outside the checkout
+        run: pip install -e . --no-deps && cd "$RUNNER_TEMP" && python -m fmka.cli help
+      - name: Tests (the container-startup cases use Git for Windows sh, never WSL)
+        run: python -m pytest -q tests -rs
+      - run: python eval/check_readme.py
+      - run: python eval/eval_claim_guard.py --check
   docker:
     runs-on: ubuntu-latest
     steps:

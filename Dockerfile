@@ -4,6 +4,11 @@
 FROM python:3.11-slim@sha256:e88e9763f943ec1834f992a4b51e0f24500486803e8bc534e5767af9ea65f6ce
 WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PYTHONPATH=/app/src HF_HOME=/app/.cache
+# Debian fixes published after the pinned digest (e.g. apt and zlib1g in 2026-11) are applied at build time, so
+# the image scan does not depend on how recently the base image was refreshed.
+RUN apt-get update \
+ && apt-get upgrade -y --no-install-recommends \
+ && rm -rf /var/lib/apt/lists/*
 COPY requirements.txt .
 # The base image's setuptools and wheel carry fixable CVEs (wheel, and jaraco.context vendored in setuptools), so
 # they are upgraded. pip is not used at run time and is removed at the end: the base image's pip 24.0 has fixable
