@@ -2,6 +2,8 @@
 
 Cited search and question answering over Singapore building and facilities-management codes. The system retrieves clauses and checks recognized generated quantities against locally cited source statements: value, unit, comparator and a conservative lexical subject signature. Detected unsupported or ambiguous quantity statements are withheld. These bounded checks do not establish general semantic entailment or applicability. The system also extracts quantitative requirements and evaluates passage classification.
 
+**Status (measured 2026-10-14 with qwen2.5:3b):** the guard withheld every generated answer. 0 of 40 answerable questions got a shown answer, although 33 and 34 of the 40 drafts (two runs) stated the expected values with a gold citation; 8 of 8 unanswerable questions were refused and no wrong answer was shown. In practice the system is cited-clause search with abstention: hybrid retrieval ranks a gold clause or page first for 36 of the 40 answerable questions (Hit@1 0.900, MRR@20 0.946). The requirement extractor scores F1 0.815 on a 20-passage test set. Main limits: eight documents, 48 questions written by me, and an answer path that needs a model quoting the source more closely or a guard that accepts paraphrased subjects. The result tables and the numbers in this status line are checked against the committed result files by `python eval/check_readme.py` in CI.
+
 - **Retrieval:** hybrid. BM25 keyword search is combined with dense vectors (bge-small) through reciprocal-rank fusion. The vectors are held in DuckDB with an HNSW index (the `vss` extension). Document restrictions apply before each candidate limit, so an allowed passage is not lost behind more highly ranked documents outside the filter. Omitted or empty `docs` means all documents; a nonempty filter with no matching documents returns no hits.
 - **Grounded answers:** a draft is shown only if all of these hold:
   - it cites the supplied passages;
@@ -12,7 +14,7 @@ Cited search and question answering over Singapore building and facilities-manag
 - **Document intelligence:**
   - extracts requirements such as "not less than 850 mm" as (comparator, value, unit, subject);
   - classifies passages into their code and chapter.
-- **Serving:** a FastAPI service (`/search`, `/ask`, `/extract`) with a Dockerfile. CI runs the tests and the mutation check, and builds the image.
+- **Serving:** a FastAPI service (`/search`, `/ask`, `/extract`) with a Dockerfile. CI runs the tests (Linux and Windows), the mutation check and the README number check, and builds the image.
 - **LLM:** any OpenAI-compatible endpoint. The evaluation uses a local 3B model (qwen2.5:3b through Ollama on a 4 GB GPU), so no data leaves the machine and no key is needed. DeepSeek or Azure OpenAI can be used through the same client, but neither was tested here.
 
 ## Corpus
@@ -39,7 +41,7 @@ Parsing cuts numbered documents at clause numbers (for example "2.3.9", "CLAUSE 
 
 ## Evaluation results
 
-Retrieval and requirement extraction were rerun on 2026-10-14 at the current code and reproduce the tables below exactly. Generated answers were measured again on the same day, in two runs; see [Grounded answering](#grounded-answering-48-questions). The earlier answer table (v1–v4) was measured before the quantity/citation guard was added on 2026-10-10. It is kept as history and does not describe the current system. Corrected classification and the synthetic checker comparison use separate result files.
+Retrieval and requirement extraction were rerun on 2026-10-14 at the code of that date and reproduce the tables below exactly. Generated answers were measured again on the same day, in two runs; see [Grounded answering](#grounded-answering-48-questions). The earlier answer table (v1–v4) was measured before the quantity/citation guard was added on 2026-10-10. It is kept as history and does not describe the current system. Corrected classification and the synthetic checker comparison use separate result files.
 
 ### Retrieval (40 answerable questions)
 
@@ -59,19 +61,21 @@ The questions are split into a development set (q01–q20, u01–u04) and a test
 
 An answer counts as correct only if it states the expected values **and** cites a gold clause.
 
-#### Current code, measured 2026-10-14
+#### Guard at `e091712`, measured 2026-10-14
 
 The model is qwen2.5:3b-16k through Ollama at temperature 0, on a GTX 1650 that another job was also using. Requests that timed out were sent again unchanged. The table also scores each model draft, whether or not it was shown. Per-question records, without draft text, are in [`eval/results/qa_runs_2026-10-14.json`](eval/results/qa_runs_2026-10-14.json).
 
 | Guard | Run | Shown and correct (dev / test) | Shown but wrong | Withheld as unverified (dev / test) | Answerable abstained | Drafts correct with gold citation (dev / test) | Unanswerable abstained / 8 |
 |---|---|---|---|---|---|---|---|
 | `13a209d`, before the citation-placement fix | 1 | 0 / 0 | 0 | 19 / 19 | 2 | 18 / 16 | 8 |
-| `e091712`, current | 1 | 0 / 0 | 0 | 18 / 19 | 3 | 17 / 16 | 8 |
-| `e091712`, current | 2 | 0 / 0 | 0 | 18 / 20 | 2 | 17 / 17 | 8 |
+| `e091712` (measured 2026-10-14) | 1 | 0 / 0 | 0 | 18 / 19 | 3 | 17 / 16 | 8 |
+| `e091712` (measured 2026-10-14) | 2 | 0 / 0 | 0 | 18 / 20 | 2 | 17 / 17 | 8 |
+
+Later code was not re-measured. The only guard change after `e091712` (in `427472b`) also rejects any remaining mathematical symbol such as ≠, ± or ≈, in answers and sources. It can only withhold more drafts, so "0 shown" still holds; the withheld and draft counts belong to `e091712`.
 
 What the measurement shows:
 
-- **The current system shows no generated answer.** In both runs, none of the 40 answerable questions got a shown answer. All 8 unanswerable questions were refused and no wrong answer was shown. When a draft is withheld, `/ask` returns the withheld message with references to the cited and retrieved clauses.
+- **The measured guard shows no generated answer.** In both runs, none of the 40 answerable questions got a shown answer. All 8 unanswerable questions were refused and no wrong answer was shown. When a draft is withheld, `/ask` returns the withheld message with references to the cited and retrieved clauses.
 - **The model's drafts are mostly right.** 33 and 34 of the 40 drafts state the expected values and cite a gold clause. The guard withholds all of them.
 - **Citation placement was one cause, and it is fixed.** The model usually writes the citation before the sentence ("[1] A spiral staircase ..."), while the guard bound a citation only to the text before it. Before the fix, 29 of 40 drafts had a statement with no valid local citation. A citation now binds to the one sentence next to it, on either side, and sentence-initial phrases such as "According to [1]," count as citations. After the fix, 12 and 13 of 40 drafts still have an uncited statement. In most of these the model cites only the first sentence of a multi-sentence answer, and the guard refuses the rest by design.
 - **The quantity grammar is now the limiting check.** As a diagnostic, each run's drafts were rescored with every sentence credited with every citation in its draft. This binding is deliberately too permissive and is not used by the system. Even so, only 1 of the 33 or 34 correct drafts passes, and 1 wrong draft also passes. Most correct drafts paraphrase the source, and the subject check requires the source clause's own wording. Others state two quantities in one sentence ("1500 mm by 1750 mm") or a quantity the grammar does not parse. These checks are what keep subject-transfer errors out, so they have not been loosened to raise the answer rate.
@@ -129,6 +133,8 @@ The extractor was scored on hand-labelled passages. A match needs the same compa
 | Dev, after writing rules from its errors | 30 | 1.000 | 0.984 | 0.992 |
 | **Test** (sampled and labelled only after the rules were fixed) | 20 | **0.943** | **0.717** | **0.815** |
 
+Gold rows are keyed by the chunk id of a locally rebuilt index. `eval/eval_extraction.py` therefore refuses to score when a PDF in `data/raw` is not the tested edition from `sources.json`, when a gold chunk id is missing, or when a row pinned with `text_sha256` points at different text (`--pin-gold` writes those hashes). New runs record commit, index, gold and source fingerprints in the result file. The committed `extraction.json` was produced before this check and has no provenance block; it needs a rerun on the tested editions to gain one.
+
 Recall on the test set is what to expect on new text. The misses are:
 
 - one comparator shared by several values ("at least 900 mm wide, 480 mm deep");
@@ -138,19 +144,9 @@ Recall on the test set is what to expect on new text. The misses are:
 
 ### Passage routing
 
-Stratified 5-fold cross-validation. **The historical embedding scores below contain label leakage:** the earlier code reused retrieval vectors whose inputs included the document title and clause number. Only the TF-IDF branch received cleaned text. These scores are retained for audit, not as evidence for a fair embedding-versus-TF-IDF comparison.
+Stratified 5-fold cross-validation. The labels come from the documents' own structure, so no hand labelling was involved. Both feature families encode the same cleaned heading and body. Clause references are removed and no document-title or clause metadata is prepended. The pretrained sentence encoder is frozen; TF-IDF vocabulary and both classifiers are fitted separately within each training fold. `python -m fmka.classify` writes `eval/results/classification_corrected.json`.
 
-| Task | Passages | Classes | Majority | TF-IDF + LR | bge-small + LR |
-|---|---|---|---|---|---|
-| Source document | 2,180 | 8 | acc 0.638 | acc 0.988 / F1 0.958 | **acc 0.996 / F1 0.975** |
-| Fire Code chapter | 1,390 | 11 | acc 0.187 | acc 0.852 / F1 0.771 | **acc 0.895 / F1 0.864** |
-| Accessibility Code chapter | 371 | 9 | acc 0.307 | acc 0.819 / F1 0.778 | **acc 0.852 / F1 0.824** |
-
-F1 is macro-F1. The labels come from the documents' own structure, so no hand labelling was involved.
-
-The corrected implementation encodes the same cleaned heading and body for both feature families. It removes clause references and does not prepend document-title or clause metadata. The pretrained sentence encoder is frozen; TF-IDF vocabulary and both classifiers are fitted separately within each training fold. `python -m fmka.classify` writes `eval/results/classification_corrected.json`, preserving `classification.json` as the historical record.
-
-The corrected run on the existing 2,180-chunk local index produced the following results. The index fingerprint, cached model revision and actual package versions are recorded in [the run provenance](eval/results/classification_corrected_provenance.json).
+The run on the existing 2,180-chunk local index produced the following results. The index fingerprint, cached model revision and actual package versions are recorded in [the run provenance](eval/results/classification_corrected_provenance.json).
 
 | Task | TF-IDF + LR acc / macro-F1 | Clean-content bge-small + LR acc / macro-F1 |
 |---|---|---|
@@ -158,7 +154,17 @@ The corrected run on the existing 2,180-chunk local index produced the following
 | Fire Code chapter (11 classes) | 0.852 / 0.771 | 0.804 / 0.773 |
 | Accessibility chapter (9 classes) | 0.819 / 0.778 | 0.836 / 0.809 |
 
-TF-IDF results match the archived run. The embedding result no longer supports the earlier claim of uniformly higher accuracy. These are within-corpus, chunk-level folds, not an evaluation on unseen documents; adjacent or similarly worded clauses can still make that task easier.
+TF-IDF has the higher accuracy on source document and Fire Code chapter (Fire Code macro-F1 differs by 0.002); the embedding is ahead on both measures for the Accessibility chapter. These are within-corpus, chunk-level folds, not an evaluation on unseen documents; adjacent or similarly worded clauses can still make that task easier.
+
+**Archived, with label leakage (not a valid comparison).** The earlier code reused retrieval vectors whose inputs included the document title and clause number; only the TF-IDF branch received cleaned text. [`classification.json`](eval/results/classification.json) keeps that run for audit. F1 is macro-F1.
+
+| Task | Passages | Classes | Majority | TF-IDF + LR | bge-small + LR (leaky) |
+|---|---|---|---|---|---|
+| Source document | 2,180 | 8 | acc 0.638 | acc 0.988 / F1 0.958 | acc 0.996 / F1 0.975 |
+| Fire Code chapter | 1,390 | 11 | acc 0.187 | acc 0.852 / F1 0.771 | acc 0.895 / F1 0.864 |
+| Accessibility Code chapter | 371 | 9 | acc 0.307 | acc 0.819 / F1 0.778 | acc 0.852 / F1 0.824 |
+
+TF-IDF results are identical in both runs. Without the leaked metadata the embedding no longer has uniformly higher accuracy.
 
 ## Tests
 
@@ -177,7 +183,10 @@ The tests cover:
 - restricted retrieval with matching documents beyond the global candidate pool;
 - overlapping HTTP searches and answers keep their DuckDB result cursors, document filters and source references isolated;
 - failed and successful index publication, preserving the previous database until the replacement is complete;
-- classification feature inputs and real cross-validation training/validation isolation.
+- classification feature inputs and real cross-validation training/validation isolation;
+- the extraction evaluation refusing other PDF editions, missing gold chunks and changed passage text;
+- every number in this README's result tables and status lines against `eval/results` (`eval/check_readme.py`), including that a changed cell or extra row is reported;
+- the Docker start command with fake bootstrap programs in a real POSIX `sh` (on Windows the one from Git for Windows; WSL only if `FMKA_TEST_ALLOW_WSL=1`).
 
 `tests/mutate.py` plants deliberate bugs, and every one must fail at least one test. It first checks the full unmodified suite, requires unique and compilable mutations, and only counts actual JUnit test failures as caught defects. Syntax errors, collection/setup errors, process failures and timeouts are not kills. Target files are restored byte-for-byte even on failure. Run `python tests/mutate.py --self-test` to check the harness itself. Mutation runs temporarily edit source: run them exclusively, with no concurrent editor, test, build or application process using the checkout.
 
@@ -192,7 +201,10 @@ Matching a quantity tuple does not prove that a source's conditions, exceptions 
 ## Run it
 
 ```bash
-pip install -r requirements.txt
+# Python 3.11, from the repository root (bash, or Git Bash on Windows)
+pip install -r requirements.txt   # or requirements-ci.txt: no torch, enough for the tests and checks
+pip install -e . --no-deps        # makes the fmka package importable (alternative: export PYTHONPATH=src)
+python eval/check_readme.py       # every README number against eval/results; no model or corpus
 python -m fmka.cli fetch      # official PDFs into data/raw (local use only)
 python -m fmka.cli build      # parse, embed, index into data/processed/fmka.duckdb
 python -m fmka.cli search "minimum clear width of an exit door"
@@ -204,7 +216,7 @@ FMKA_LLM_BASE_URL=... python eval/run_eval.py && python eval/eval_extraction.py
 python -m fmka.classify      # corrected classification features; separate result file
 ```
 
-Run the commands from the repository root with `PYTHONPATH=src`. The Docker image fetches and indexes the documents on first start, and stops if either step fails. Rebuilding the index constructs a separate database and replaces the previous one only after all tables and vectors are written and closed. On Windows an open reader may prevent replacement; close readers before rebuilding and restart long-running API processes to use the new index.
+In PowerShell, set the LLM variables with `$env:FMKA_LLM_BASE_URL = "http://localhost:11434/v1"` (and likewise `FMKA_LLM_MODEL`) instead of the inline `VAR=value` prefix. The Docker image fetches and indexes the documents on first start, and stops if either step fails. Rebuilding the index constructs a separate database and replaces the previous one only after all tables and vectors are written and closed. On Windows an open reader may prevent replacement; close readers before rebuilding and restart long-running API processes to use the new index.
 
 ## Limits
 

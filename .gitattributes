@@ -1,0 +1,5 @@
+# Text files are stored and checked out with LF so fingerprints and the Docker CMD behave the same on Windows and Linux.
+* text=auto eol=lf
+*.pdf -text
+*.duckdb -text
+*.png -text

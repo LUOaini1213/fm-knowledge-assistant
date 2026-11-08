@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fmka"
+version = "0.1.0"
+description = "Cited clause search with abstention over Singapore building and FM codes, with a quantity/citation answer guard"
+readme = "README.md"
+# Tested with Python 3.11 (CI, Dockerfile). Dependencies stay in requirements.txt / requirements-ci.txt;
+# install them first, then `pip install -e . --no-deps` makes `python -m fmka.cli` work from any directory.
+requires-python = ">=3.11"
+
+[tool.setuptools.packages.find]
+where = ["src"]
